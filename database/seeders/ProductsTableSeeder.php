@@ -25,14 +25,14 @@ class ProductsTableSeeder extends Seeder
             ['name' => 'Kiselo ljuta supa', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 2, 'image_path' => 'assets/kiselo_ljuta_supa.JPG'],
 
             // Morski plodovi (category_id = 3)
-            ['name' => 'Pohovani riblji file', 'description' => '', 'price_delivery' => 1100, 'price_takeaway' => 1000, 'category_id' => 3, 'image_path' => 'assets/riblji-file.PNG'],
-            ['name' => 'Pohovane lignje', 'description' => '', 'price_delivery' => 1100, 'price_takeaway' => 1000, 'category_id' => 3, 'image_path' => 'assets/pohovane-lignje.PNG'],
+            ['name' => 'Pohovani riblji file', 'description' => '', 'price_delivery' => 1100, 'price_takeaway' => 1000, 'category_id' => 3, 'image_path' => 'assets/riblji-file.png'],
+            ['name' => 'Pohovane lignje', 'description' => '', 'price_delivery' => 1100, 'price_takeaway' => 1000, 'category_id' => 3, 'image_path' => 'assets/pohovane-lignje.png'],
 
             // Jela bez mesa (category_id = 4)
-            ['name' => 'Tofu sir', 'description' => 'tofu, povrće, šampinjoni, sos po želji', 'price_delivery' => 800, 'price_takeaway' => 750, 'category_id' => 4, 'image_path' => 'assets/tofu.PNG'],
+            ['name' => 'Tofu sir', 'description' => 'tofu, povrće, šampinjoni, sos po želji', 'price_delivery' => 800, 'price_takeaway' => 750, 'category_id' => 4, 'image_path' => 'assets/tofu.png'],
             ['name' => 'Mesano povrće', 'description' => 'povrće, paprika, kineske pečurke, šampinjoni, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 4, 'image_path' => 'assets/mesano_povrce.JPG'],
-            ['name' => 'Prženi rezanci', 'description' => 'rezanci, povrće, šampinjoni, sos po želji', 'price_delivery' => 800, 'price_takeaway' => 750, 'category_id' => 4, 'image_path' => 'assets/przeni-rezanci.PNG'],
-            ['name' => 'Pirinčane nudle', 'description' => 'nudle, povrće, šampinjoni, sos po želji', 'price_delivery' => 800, 'price_takeaway' => 750, 'category_id' => 4, 'image_path' => 'assets/pirincane-nudle.PNG'],
+            ['name' => 'Prženi rezanci', 'description' => 'rezanci, povrće, šampinjoni, sos po želji', 'price_delivery' => 800, 'price_takeaway' => 750, 'category_id' => 4, 'image_path' => 'assets/przeni-rezanci.png'],
+            ['name' => 'Pirinčane nudle', 'description' => 'nudle, povrće, šampinjoni, sos po želji', 'price_delivery' => 800, 'price_takeaway' => 750, 'category_id' => 4, 'image_path' => 'assets/pirincane-nudle.png'],
 
             // Pirinač i nudle (category_id = 5)
             ['name' => 'Beli pirinac', 'description' => '', 'price_delivery' => 200, 'price_takeaway' => 200, 'category_id' => 5, 'image_path' => 'assets/beli_pirinac.JPG'],
@@ -63,13 +63,13 @@ class ProductsTableSeeder extends Seeder
             ['name' => 'Meso sa sampinjonima', 'description' => 'povrće, šampinjoni, sos', 'price_delivery' => 700, 'price_takeaway' => 650, 'category_id' => 7, 'image_path' => 'assets/sa_sampinjonima.JPG'],
             ['name' => 'Meso sa sitaki pecurkama', 'description' => 'povrće, šitaki pečurke, sos', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/sitaki.JPG'],
             ['name' => 'Susam piletina', 'description' => 'povrće, šampinjoni, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/susam_pile.JPG'],
-            ['name' => 'Pohovani komadići', 'description' => 'povrće, šampinjoni, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/pohovani-komadici.PNG'],
-            ['name' => 'Usijani tiganj', 'description' => 'kupus na dnu porcije, crni luk, meso, sos', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/usijani_tiganj.PNG'],
-            ['name' => 'Meso u sečuan sosu', 'description' => 'povrće, sos po želji', 'price_delivery' => 700, 'price_takeaway' => 650, 'category_id' => 7, 'image_path' => 'assets/secuan-pile.PNG'],
-            ['name' => 'Meso sa krompirom i graškom', 'description' => 'krompir, grasak, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/krompir-grasak.PNG'],
-            ['name' => 'Meso sa ljutom paprikom i prazilukom', 'description' => 'paprika, praziluk, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/paprika-praziluk.PNG'],
-            ['name' => 'Meso sa prženim špagetama', 'description' => 'povrće, špagete, jaja,  sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/spagete.PNG'],
-            ['name' => 'Meso sa karfiolom', 'description' => 'brokoli, karfiol, šargarepa, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/brokoli.PNG'],
+            ['name' => 'Pohovani komadići', 'description' => 'povrće, šampinjoni, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/pohovani-komadici.png'],
+            ['name' => 'Usijani tiganj', 'description' => 'kupus na dnu porcije, crni luk, meso, sos', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/usijani_tiganj.png'],
+            ['name' => 'Meso u sečuan sosu', 'description' => 'povrće, sos po želji', 'price_delivery' => 700, 'price_takeaway' => 650, 'category_id' => 7, 'image_path' => 'assets/secuan-pile.png'],
+            ['name' => 'Meso sa krompirom i graškom', 'description' => 'krompir, grasak, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/krompir-grasak.png'],
+            ['name' => 'Meso sa ljutom paprikom i prazilukom', 'description' => 'paprika, praziluk, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/paprika-praziluk.png'],
+            ['name' => 'Meso sa prženim špagetama', 'description' => 'povrće, špagete, jaja,  sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/spagete.png'],
+            ['name' => 'Meso sa karfiolom', 'description' => 'brokoli, karfiol, šargarepa, sos po želji', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/brokoli.png'],
 
             // Pića (category_id = 8)
             ['name' => 'Coca cola', 'description' => '0,33l', 'price_delivery' => 110, 'price_takeaway' => 100, 'category_id' => 8, 'image_path' => 'assets/kategorija_pice.jpg'],
@@ -95,7 +95,7 @@ class ProductsTableSeeder extends Seeder
                 'price_delivery' => 750,
                 'price_takeaway' => 750,
                 'category_id' => 9, // Akcije
-                'image_path' => 'assets/susam-akcija.PNG',
+                'image_path' => 'assets/susam-akcija.png',
             ],
 
         ];
