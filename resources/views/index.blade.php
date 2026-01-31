@@ -120,7 +120,7 @@
         {{-- SLIKA --}}
         <div style="text-align:center;">
             <img
-                src="{{ asset('assets/susam-akcija.PNG') }}"
+                src="{{ asset('assets/susam-akcija.png') }}"
                 alt="Akcija Susam piletina i Coca Cola"
                 style="
                     max-width: 420px;
@@ -163,7 +163,7 @@
                 </a>
             </div>
             <div class="dish-image">
-                <img src="{{ asset('assets/rolnice_povrce.jpg') }}"
+                <img src="{{ asset('assets/rolnice_povrce.JPG') }}"
                      alt="Rolnice sa povrćem – kineski restoran Mister Wang Beograd">
             </div>
         </div>
@@ -182,7 +182,7 @@
                 </a>
             </div>
             <div class="dish-image">
-                <img src="{{ asset('assets/kralj.jpg') }}"
+                <img src="{{ asset('assets/kralj.JPG') }}"
                      alt="Kraljevska piletina – kineska hrana dostava Beograd">
             </div>
         </div>
@@ -203,7 +203,7 @@
                 </a>
             </div>
             <div class="dish-image">
-                <img src="{{ asset('assets/kung_pao.jpg') }}"
+                <img src="{{ asset('assets/kung-pao.jpg') }}"
                      alt="Kung Pao piletina – kineski restoran Mister Wang Beograd">
             </div>
         </div>
@@ -241,7 +241,7 @@
                 </a>
             </div>
             <div class="dish-image">
-                <img src="{{ asset('assets/poh_banana.jpg') }}"
+                <img src="{{ asset('assets/poh_banana.JPG') }}"
                      alt="Pohovana banana – kineski dezert Mister Wang">
             </div>
         </div>
