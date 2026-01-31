@@ -17,10 +17,10 @@ class CategoriesTableSeeder extends Seeder
             ['name' => 'Morski plodovi', 'image' => 'assets/kategorija_morski_plodovi.jpg'],
             ['name' => 'Jela bez mesa', 'image' => 'assets/kategorija_jela_bez_mesa.jpg'],
             ['name' => 'Pirinač i nudle', 'image' => 'assets/kategorija_pirinac.jpg'],
-            ['name' => 'Dezerti', 'image' => 'assets/poh_ananas.jpg'],
-            ['name' => 'Jela sa mesom', 'image' => 'assets/susam_pile.jpg'],
+            ['name' => 'Dezerti', 'image' => 'assets/poh_ananas.JPG'],
+            ['name' => 'Jela sa mesom', 'image' => 'assets/susam_pile.JPG'],
             ['name' => 'Piće', 'image' => 'assets/kategorija_pice.jpg'],
-            ['name' => 'Akcije', 'image' => 'assets/susam-akcija.PNG'],
+            ['name' => 'Akcije', 'image' => 'assets/susam-akcija.png'],
         ];
 
         foreach ($categories as $cat) {
