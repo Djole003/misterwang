@@ -1,0 +1,201 @@
+/* ================= GLOBAL ================= */
+body {
+    min-height: 100vh;
+    font-size: 14px;
+    background-color: #f4f6f9;
+    overflow-x: hidden;
+}
+
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+    width: 230px;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #212529, #1a1d20);
+    color: #fff;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.sidebar .nav-link {
+    color: rgba(255,255,255,.75);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.sidebar .nav-link.active {
+    background-color: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255,255,255,.12);
+    color: #fff;
+}
+
+/* ================= CONTENT ================= */
+.content-wrapper {
+    flex-grow: 1;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================= HEADER ================= */
+.admin-header {
+    background: #fff;
+    border-bottom: 1px solid #e1e5ea;
+    padding: 14px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* ================= CARDS ================= */
+.card {
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+}
+
+.card-header {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.card-footer button {
+    border-radius: 6px;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 992px) {
+
+    .admin-wrapper {
+        display: block;
+    }
+
+    /* SIDEBAR OFFCANVAS */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1100;
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    /* OVERLAY */
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1090;
+        display: none;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+
+    main {
+        padding: 12px !important;
+    }
+
+    .card-footer button {
+        width: 100%;
+    }
+}
+
+
+/* =========================
+   ADMIN PRODUCTS – CLEAN
+========================= */
+
+.ap-page {
+    padding: 24px;
+    width: 100%;
+}
+
+.ap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.ap-table-wrapper {
+    background: #fff;
+    border-radius: 8px;
+    overflow-x: auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.ap-table {
+    width: 100%;
+    margin: 0;
+}
+
+.ap-table thead th {
+    background: #f8f9fa;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.ap-table td {
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.ap-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.ap-actions {
+    white-space: nowrap;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+
+    .ap-table thead {
+        display: none;
+    }
+
+    .ap-table tr {
+        display: block;
+        border-bottom: 1px solid #eee;
+        padding: 10px;
+    }
+
+    .ap-table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+    }
+
+    .ap-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #666;
+    }
+}
+
