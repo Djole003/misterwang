@@ -29,6 +29,11 @@
             height: 240px;
             object-fit: cover;
         }
+
+        .status-badge {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body>
@@ -54,12 +59,35 @@
 
                     <div class="card restaurant-card bg-dark text-white"
                          onclick="this.closest('form').submit()">
+
                         <img src="{{ asset($restaurant->image_path) }}"
                              class="card-img-top"
                              alt="{{ $restaurant->name }}">
 
                         <div class="card-body text-center">
-                            <h5 class="card-title mb-0">{{ $restaurant->name }}</h5>
+                            <h5 class="card-title mb-1">
+                                {{ $restaurant->name }}
+                            </h5>
+
+                            {{-- STATUS LOKALA --}}
+                            <div class="status-badge mt-2">
+                                @if(isset($restaurant->status))
+                                    @if($restaurant->status['open'])
+                                        <span class="text-success">
+                                            {{ $restaurant->status['message'] }}
+                                        </span>
+                                    @else
+                                        <span class="text-danger">
+                                            {{ $restaurant->status['message'] }}
+                                        </span>
+                                    @endif
+                                @else
+                                    <span class="text-warning">
+                                        Status nepoznat
+                                    </span>
+                                @endif
+                            </div>
+
                         </div>
                     </div>
                 </form>

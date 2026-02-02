@@ -53,7 +53,7 @@ class ProductsTableSeeder extends Seeder
             ['name' => 'Meso u kiselo ljutom sosu', 'description' => 'Povrće, sos', 'price_delivery' => 700, 'price_takeaway' => 650, 'category_id' => 7, 'image_path' => 'assets/kiselo_ljuti.JPG'],
             ['name' => 'Kraljevska Piletina', 'description' => 'Kupus na dnu, susam piletina, ananas, tomato sos', 'price_delivery' => 800, 'price_takeaway' => 750, 'category_id' => 7, 'image_path' => 'assets/kralj.JPG'],
             ['name' => 'Kung pao piletina', 'description' => 'krastavac, paprika, krompir, šargarepa, kikiriki, tomato sos', 'price_delivery' => 850, 'price_takeaway' => 800, 'category_id' => 7, 'image_path' => 'assets/kung_pao.JPG'],
-            ['name' => 'Meso u ostriga sosu', 'description' => 'Kupus na dnu, meso, sos', 'price_delivery' => 700, 'price_takeaway' => 650, 'category_id' => 7, 'image_path' => 'assets/ostriga_sos.JPG'],
+            ['name' => 'Meso u ostriga sosu', 'description' => 'Kupus na dnu, meso, sos', 'price_delivery' => 800, 'price_takeaway' => 750, 'category_id' => 7, 'image_path' => 'assets/ostriga_sos.JPG'],
             ['name' => 'Meso sa paprikom u peking sosu', 'description' => 'paprika, šampinjoni, šargarepa, sos', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/paprika_peking.JPG'],
             ['name' => 'Meso sa prazilukom u peking sosu', 'description' => 'praziluk, šampinjoni, šargarepa, sos', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/praziluk_peking.JPG'],
             ['name' => 'Meso sa kikirikijem', 'description' => 'povrće, kikiriki, sos', 'price_delivery' => 700, 'price_takeaway' => 650, 'category_id' => 7, 'image_path' => 'assets/sa_kikirikijem.JPG'],
@@ -85,7 +85,14 @@ class ProductsTableSeeder extends Seeder
             ['name' => 'Fuze tea višnja', 'description' => '0,5l', 'price_delivery' => 120, 'price_takeaway' => 110, 'category_id' => 8, 'image_path' => 'assets/fuze-tea-visnja.jpg'],
             ['name' => 'Voda', 'description' => '0,5l', 'price_delivery' => 70, 'price_takeaway' => 70, 'category_id' => 8, 'image_path' => 'assets/voda.jpg'],
             ['name' => 'Schweppes', 'description' => '0,33l', 'price_delivery' => 110, 'price_takeaway' => 100, 'category_id' => 8, 'image_path' => 'assets/sveps.jpg'],
+            ['name' => 'Monster žuti', 'description' => '0,5l', 'price_delivery' => 260, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-zuti.jpg'],
+            ['name' => 'Monster beli', 'description' => '0,5l', 'price_delivery' => 260, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-beli.jpg'],
+            ['name' => 'Monster crni', 'description' => '0,5l', 'price_delivery' => 260, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-crni.webp'],
+            ['name' => 'Monster rozi', 'description' => '0,5l', 'price_delivery' => 260, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-rozi.jpg'],
 
+            
+            
+            
             // ======================
             // AKCIJA – COMBO PONUDA
             // ======================

@@ -10956,7 +10956,7 @@ body{
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    height: 500px; /* visina slidera */
+    height: 500px;
     overflow: hidden;
 }
 
@@ -11030,28 +11030,37 @@ body{
     flex: 1;
     max-width: 50%;
     text-align: center;
+
+    /* da se slike ne penju previsoko */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .dish-slide .dish-image img {
     width: 80%;
     max-width: 400px;
+    max-height: 380px;
+
+    /* NAJBITNIJE ZA TVOJ PROBLEM */
+    object-fit: contain;
+
     border-radius: 50%;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     transition: transform 0.5s ease, opacity 0.5s ease;
-    opacity: 0.9;
+    opacity: 0.95;
 }
 
 .dish-slide.show .dish-image img {
     opacity: 1;
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 /* Slider dugmad */
-/* Slider dugmad */
 .slider-btn {
     position: absolute;
-    top: 50%; /* vertikalno centrirano */
-    transform: translateY(-50%); /* centriranje */
+    top: 50%;
+    transform: translateY(-50%);
     background-color: rgba(0,0,0,0.6);
     color: #fff;
     border: none;
@@ -11063,19 +11072,22 @@ body{
     cursor: pointer;
     font-size: 1.8rem;
     border-radius: 50%;
-    z-index: 20; /* iznad slika */
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    z-index: 20;
+    transition: background-color 0.3s ease;
 }
 
 .slider-btn:hover {
     background-color: rgba(0,0,0,0.8);
-    /* transform se uklonio sa hovera da se ne pomera */
 }
 
 .slider-btn.prev { left: 15px; }
 .slider-btn.next { right: 15px; }
 
-/* Responsive */
+/* =======================
+   RESPONSIVE FIX
+======================= */
+
+/* TABLETI */
 @media (max-width: 992px){
     .slider-btn {
         width: 40px;
@@ -11084,28 +11096,66 @@ body{
     }
 }
 
+/* MOBILNI */
+@media (max-width: 768px){
+
+    .hero-slider-container {
+        height: 520px; /* malo veća visina da sve stane */
+    }
+
+    .dish-slide {
+        flex-direction: column-reverse;
+        text-align: center;
+        padding: 20px 10px;
+    }
+
+    .dish-slide .dish-content,
+    .dish-slide .dish-image {
+        max-width: 100%;
+        padding: 10px;
+    }
+
+    .dish-slide .dish-title {
+        font-size: 1.8rem;
+    }
+
+    .dish-slide .dish-description {
+        font-size: 1rem;
+    }
+
+    .dish-slide .dish-image img {
+        width: 70%;
+        max-width: 300px;
+        max-height: 260px;
+
+        /* OVO REŠAVA MEŠANO POVRĆE */
+        object-fit: contain;
+    }
+}
+
+/* MANJI MOBILNI */
 @media (max-width: 480px){
+
+    .hero-slider-container {
+        height: 560px; /* da ne bude zbijeno */
+    }
+
+    .dish-slide .dish-title {
+        font-size: 1.6rem;
+    }
+
+    .dish-slide .dish-image img {
+        width: 80%;
+        max-width: 260px;
+        max-height: 240px;
+    }
+
     .slider-btn {
         width: 35px;
         height: 35px;
         font-size: 1.2rem;
     }
 }
-
-/* Responsive */
-@media (max-width: 992px){
-    .dish-slide {
-        flex-direction: column-reverse;
-        text-align: center;
-    }
-    .dish-slide .dish-content, 
-    .dish-slide .dish-image { 
-        max-width: 100%; 
-        padding: 10px; 
-    }
-    .dish-slide .dish-image img { width: 60%; }
-}
-
 
 
 /* ======================== FEATURED PRODUCTS ======================== */

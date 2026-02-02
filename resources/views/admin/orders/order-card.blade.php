@@ -3,6 +3,7 @@
         'primljena'     => ['border-warning', 'bg-warning text-dark', 'Primljena'],
         'u_pripremi'    => ['border-primary', 'bg-primary', 'U pripremi'],
         'dostavlja_se'  => ['border-success', 'bg-success', 'Dostavlja se'],
+        'rejected'      => ['border-danger', 'bg-danger', 'Odbijeno'],
     ];
 
     [$border, $badge, $label] =
@@ -19,8 +20,6 @@
 <div class="card mb-3 shadow-sm {{ $border }} order-card"
      data-order-id="{{ $order->id }}"
      data-status="{{ $order->status }}">
-
-
 
     {{-- HEADER --}}
     <div class="card-header d-flex justify-content-between align-items-center">
@@ -60,6 +59,14 @@
             </div>
         @endif
 
+        {{-- AKO JE ODBIJENO – PRIKAZ RAZLOGA --}}
+        @if($order->status === 'rejected')
+            <div class="alert alert-danger py-2 mb-3">
+                ❌ <strong>Porudžbina je odbijena</strong><br>
+                <strong>Razlog:</strong> {{ $order->rejection_reason ?? '—' }}
+            </div>
+        @endif
+
         {{-- ODBROJAVANJE --}}
         @if($order->status === 'u_pripremi' && $order->ready_at)
             <div class="alert alert-info text-center py-2 mb-2">
@@ -84,8 +91,6 @@
                 {{ $info['napomena'] }}
             </div>
         @endif
-
-
 
         <hr class="my-2">
 
@@ -136,6 +141,7 @@
                             {{ $d['mix_rice'] === 'da' ? 'Meša se u jelo' : 'Odvojeno' }}
                         </li>
                     @endif
+
                     @if(!empty($d['cutlery']))
                         <li>
                             🍴 <strong>Pribor:</strong>
@@ -155,7 +161,6 @@
                         </li>
                     @endif
 
-
                     @if(!empty($d['notes']))
                         <li>
                             <div class="alert alert-secondary py-1 px-2 mb-1">
@@ -164,7 +169,6 @@
                             </div>
                         </li>
                     @endif
-
 
                 </ul>
             </li>
@@ -178,18 +182,27 @@
     <div class="card-footer text-end">
 
         @if($order->status === 'primljena')
+
             <button
                 class="btn btn-sm btn-primary open-accept-modal"
                 data-id="{{ $order->id }}">
                 Prihvati
             </button>
 
+            <button
+                class="btn btn-sm btn-danger open-reject-modal"
+                data-id="{{ $order->id }}">
+                Odbij
+            </button>
+
         @elseif($order->status === 'u_pripremi')
+
             <button
                 class="btn btn-sm btn-success mark-ready-btn"
                 data-id="{{ $order->id }}">
                 Spremno
             </button>
+
         @endif
 
     </div>

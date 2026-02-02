@@ -17,10 +17,29 @@
         Izaberite kategoriju i poručite autentičnu kinesku hranu online.
     </p>
 
+    {{-- RUČNO SORTIRANJE KATEGORIJA PO TVOM REDOSLEDU --}}
+    @php
+        $customOrder = [
+            'akcije',
+            'predjela-i-salate',
+            'jela-sa-mesom',
+            'jela-bez-mesa',
+            'morski-plodovi',
+            'supe',
+            'pirinac-i-nudle',
+            'dezerti',
+            'pice'
+        ];
+
+        $sortedCategories = $categories->sortBy(function($category) use ($customOrder) {
+            return array_search($category->slug, $customOrder);
+        });
+    @endphp
+
     {{-- KATEGORIJE --}}
     <div class="categories-container">
         <div class="categories-grid">
-            @foreach($categories as $category)
+            @foreach($sortedCategories as $category)
                 <a href="{{ route('jelovnik.kategorija', ['slug' => $category->slug]) }}"
                    class="category-card">
 

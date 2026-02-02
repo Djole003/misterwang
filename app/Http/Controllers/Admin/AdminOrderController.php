@@ -62,10 +62,10 @@ class AdminOrderController extends Controller
         $query = $this->baseOrderQuery()
             ->whereIn('status', [
                 'zavrsena',
-                'dostavlja_se'
+                'dostavlja_se',
+                'rejected'
             ]);
 
-        // 📅 PERIODI
         switch ($request->period) {
             case 'today':
                 $query->whereDate('created_at', Carbon::today());
@@ -84,7 +84,6 @@ class AdminOrderController extends Controller
                 break;
         }
 
-        // 📅 OD–DO
         if ($request->filled('from') && $request->filled('to')) {
             $query->whereBetween('created_at', [
                 Carbon::parse($request->from)->startOfDay(),
@@ -92,7 +91,6 @@ class AdminOrderController extends Controller
             ]);
         }
 
-        // 💰 UKUPAN PAZAR
         $totalRevenue = (clone $query)->sum('total_price');
 
         $orders = $query
@@ -113,7 +111,6 @@ class AdminOrderController extends Controller
      */
     public function accept(Request $request, Order $order)
     {
-        // 🔒 ZAŠTITA: admin ne sme tuđu porudžbinu
         if (
             auth()->user()->role === 'admin' &&
             $order->restaurant_id !== auth()->user()->restaurant_id
@@ -147,12 +144,48 @@ class AdminOrderController extends Controller
 
     /**
      * ============================
+     * ODBIJANJE NARUDŽBINE
+     * ============================
+     */
+    public function reject(Request $request, Order $order)
+    {
+        // 🔒 Zaštita: admin može odbiti samo svoj restoran
+        if (
+            auth()->user()->role === 'admin' &&
+            $order->restaurant_id !== auth()->user()->restaurant_id
+        ) {
+            abort(403);
+        }
+
+        // Ne može se odbiti ako je već obrađena
+        if (!in_array($order->status, ['primljena', 'u_pripremi'])) {
+            return back()->with('error', 'Ovu porudžbinu više nije moguće odbiti.');
+        }
+
+        $request->validate([
+            'reason' => 'required|string'
+        ]);
+
+        $reason = $request->reason;
+
+        if ($request->filled('custom_reason')) {
+            $reason .= ' - ' . $request->custom_reason;
+        }
+
+        $order->status = 'rejected';
+        $order->rejection_reason = $reason;
+        $order->save();
+
+        return back()->with('success', 'Porudžbina je uspešno odbijena.');
+    }
+
+    /**
+     * ============================
      * SPREMNO DUGME
      * ============================
      */
     public function ready(Order $order)
     {
-        // 🔒 ZAŠTITA
         if (
             auth()->user()->role === 'admin' &&
             $order->restaurant_id !== auth()->user()->restaurant_id
@@ -166,13 +199,11 @@ class AdminOrderController extends Controller
             ], 400);
         }
 
-        // 🟢 TAKEAWAY
         if ($order->order_type === 'takeaway') {
             $order->status = 'zavrsena';
             $order->save();
         }
 
-        // 🚚 DELIVERY
         if ($order->order_type === 'delivery') {
             $order->status = 'dostavlja_se';
             $order->save();
@@ -195,7 +226,6 @@ class AdminOrderController extends Controller
             ->whereNotNull('ready_at')
             ->where('ready_at', '<=', now());
 
-        // ADMIN → samo svoj restoran
         if (auth()->user()->role === 'admin') {
             $query->where('restaurant_id', auth()->user()->restaurant_id);
         }

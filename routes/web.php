@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\RestaurantStatusController;
 
+
 require __DIR__.'/auth.php';
 
 
@@ -27,17 +28,27 @@ require __DIR__.'/auth.php';
 */
 Route::get('/', function () {
 
+    // Ako je ulogovan admin – ide direktno na početnu
     if (auth()->check() && auth()->user()->role === 'admin') {
         return redirect()->route('index');
     }
 
-    return app(RestaurantSelectController::class)->index();
+    // Inače normalno prikazujemo izbor lokala
+    return app(RestaurantSelectController::class)->index(
+        app(\App\Services\RestaurantStatusService::class)
+    );
 
 })->name('select.restaurant');
 
 
+/*
+|--------------------------------------------------------------------------
+| POST – ČUVANJE IZBORA LOKALA
+|--------------------------------------------------------------------------
+*/
 Route::post('/izaberi-lokal', function () {
 
+    // Admin nikad ne bira lokal
     if (auth()->check() && auth()->user()->role === 'admin') {
         return redirect()->route('index');
     }
@@ -45,7 +56,6 @@ Route::post('/izaberi-lokal', function () {
     return app(RestaurantSelectController::class)->select(request());
 
 })->name('select.restaurant.store');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -77,22 +87,62 @@ Route::middleware([EnsureRestaurantSelected::class])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | API – STATUS RESTORANA (SADA ISPRAVNO UNUTAR MIDDLEWARE-a)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/restaurant/status', function () {
+
+        $restaurantId = session('restaurant_id');
+
+        if (!$restaurantId) {
+            return response()->json([
+                'open' => true
+            ]);
+        }
+
+        $restaurant = \App\Models\Restaurant::find($restaurantId);
+
+        if (!$restaurant) {
+            return response()->json([
+                'open' => true
+            ]);
+        }
+
+        $service = app(\App\Services\RestaurantStatusService::class);
+
+        $isOpen = $service->isRestaurantOpen($restaurant);
+
+        return response()->json([
+            'open' => $isOpen,
+            'opens_at' => $service->getOpeningTime($restaurant)
+        ]);
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
     | KORPA / PORUDŽBINE
     |--------------------------------------------------------------------------
     */
-    Route::get('/korpa', [OrderController::class, 'showCart'])->name('order.cart');
+    Route::get('/korpa', [OrderController::class, 'showCart'])
+    ->name('order.cart');
 
-    Route::post('/cart/add', [OrderController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/add', [OrderController::class, 'addToCart'])
+    ->name('cart.add');
 
-    Route::delete('/korpa/ukloni/{index}', [OrderController::class, 'removeFromOrder'])
-        ->name('order.remove');
+Route::delete('/korpa/ukloni/{index}', [OrderController::class, 'removeFromOrder'])
+    ->name('order.remove');
 
-    Route::get('/checkout', [OrderController::class, 'checkout'])->name('order.checkout');
+Route::get('/checkout', [OrderController::class, 'checkout'])
+    ->name('order.checkout');
 
-    Route::post('/poruci/zavrsi', [OrderController::class, 'submitOrder'])
-        ->name('order.submit');
+Route::post('/poruci/zavrsi', [OrderController::class, 'submitOrder'])
+    ->name('order.submit');
 
-    Route::get('/thankyou', [OrderController::class, 'thankyou'])->name('order.thankyou');
+Route::get('/thankyou', [OrderController::class, 'thankyou'])
+    ->name('order.thankyou');
+
 
 
     /*
@@ -176,7 +226,6 @@ Route::middleware([EnsureRestaurantSelected::class])->group(function () {
     ->name('admin.')
     ->group(function () {
 
-        // ✅ DASHBOARD — VEZAN ZA SESSION RESTAURANT
         Route::get('/dashboard', function () {
 
             $restaurantId = session('restaurant_id');
@@ -190,12 +239,10 @@ Route::middleware([EnsureRestaurantSelected::class])->group(function () {
         })->name('dashboard');
 
 
-        // ✅ OTVORI / ZATVORI RESTORAN
         Route::post('/restaurant/toggle', [RestaurantStatusController::class, 'toggle'])
             ->name('restaurant.toggle');
 
 
-        // PRODUCTS
         Route::resource('products', AdminProductController::class);
 
         Route::post(
@@ -204,7 +251,7 @@ Route::middleware([EnsureRestaurantSelected::class])->group(function () {
         )->name('products.toggleAvailability');
 
 
-        // ORDERS
+        // ORDER RUTE
         Route::resource('orders', AdminOrderController::class)
             ->except(['show', 'create', 'store']);
 
@@ -214,10 +261,13 @@ Route::middleware([EnsureRestaurantSelected::class])->group(function () {
         Route::post('orders/{order}/ready', [AdminOrderController::class, 'ready'])
             ->name('orders.ready');
 
+        // 👇 NOVA RUTA ZA ODBIJANJE
+        Route::post('orders/{order}/reject', [AdminOrderController::class, 'reject'])
+            ->name('orders.reject');
+
         Route::get('/orders/history', [AdminOrderController::class, 'history'])
             ->name('orders.history');
     });
-
 
     /*
     |--------------------------------------------------------------------------
@@ -233,4 +283,21 @@ Route::middleware([EnsureRestaurantSelected::class])->group(function () {
             ->name('orders.repeat');
     });
 
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| DEBUG RUTE (SAMO ZA LOKALNI RAD)
+|--------------------------------------------------------------------------
+*/
+Route::get('/debug-time', function () {
+    return [
+        'now' => \Carbon\Carbon::now()->toDateTimeString(),
+        'dayOfWeek' => \Carbon\Carbon::now()->dayOfWeek,
+    ];
+});
+
+Route::get('/debug-session', function () {
+    return session()->all();
 });

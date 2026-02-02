@@ -222,7 +222,7 @@
                 </a>
             </div>
             <div class="dish-image">
-                <img src="{{ asset('assets/mesano_povrce.jpg') }}"
+                <img src="{{ asset('assets/mesano_povrce.JPG') }}"
                      alt="Mešano povrće – vegetarijanska kineska hrana Beograd">
             </div>
         </div>
