@@ -15,6 +15,66 @@
     {{-- ADMIN CSS --}}
     <link href="{{ asset('css/admin.css') }}" rel="stylesheet">
 </head>
+<style>
+/* MOBILE SIDEBAR */
+@media (max-width: 991px) {
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        background: #ffffff;
+        z-index: 1050;
+        transition: left 0.3s ease;
+
+        padding: 1rem;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.15);
+        overflow-y: auto;
+    }
+
+    .sidebar.open {
+        left: 0;
+    }
+
+    /* NAV LINKOVI */
+    .sidebar .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        padding: 10px 12px;
+        border-radius: 8px;
+
+        font-size: 15px;
+        color: #333;
+        text-decoration: none;
+
+        white-space: nowrap;
+    }
+
+    .sidebar .nav-link.active {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    /* OVERLAY */
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 1040;
+        display: none;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+}
+</style>
+
+
 <body>
 
 {{-- TOP NAV --}}
@@ -131,6 +191,31 @@
 <div class="sidebar-overlay"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function () {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('show');
+            });
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', function () {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+            });
+        }
+    });
+</script>
+
+
 
 @yield('scripts')
 </body>
