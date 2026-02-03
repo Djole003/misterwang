@@ -167,9 +167,11 @@ function stopBlink() {
 function startSoundLoop() {
     if (soundInterval) return;
 
+    // Prvo trenutno puštanje zvuka
     orderSound.currentTime = 0;
     orderSound.play().catch(() => {});
 
+    // Ponavljanje na svakih 4 sekunde dok se ne prihvati porudžbina
     soundInterval = setInterval(() => {
         orderSound.currentTime = 0;
         orderSound.play().catch(() => {});
@@ -242,6 +244,7 @@ function refreshOrders() {
             '#waiting-column .order-card[data-status="primljena"]'
         );
 
+        // AKO POSTOJI BAR JEDNA PRIMLJENA NARUDŽBINA
         if (waiting.length > 0) {
             startBlink();
             startSoundLoop();
@@ -259,6 +262,8 @@ document.addEventListener('click', function (e) {
     if (acceptBtn) {
         selectedOrderId = acceptBtn.dataset.id;
         new bootstrap.Modal(document.getElementById('acceptOrderModal')).show();
+
+        // Kad admin klikne na prihvatanje – gasi se zvuk i blink
         stopBlink();
         stopSoundLoop();
         return;

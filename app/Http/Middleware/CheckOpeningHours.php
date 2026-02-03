@@ -9,25 +9,31 @@ use Carbon\Carbon;
 class CheckOpeningHours
 {
     public function handle(Request $request, Closure $next)
-    {
-        // Uzmi vreme u Beogradu
-        $now = Carbon::now('Europe/Belgrade');
-        $day = $now->format('l'); // naziv dana: Monday, Tuesday...
-        $hour = $now->hour;
+{
+    $now = Carbon::now('Europe/Belgrade');
+    $day = $now->format('l');
+    $currentTime = $now->format('H:i');
 
-        $message = null;
+    $message = null;
 
-        if ($day === 'Saturday') {
-            $message = 'Nažalost, lokal je zatvoren subotom.';
-        } elseif ($day === 'Sunday' && ($hour < 11 || $hour >= 20)) {
-            $message = 'Nažalost, lokal je trenutno zatvoren. Radno vreme nedeljom je 11:00 - 20:00h.';
-        } elseif ($day !== 'Saturday' && $day !== 'Sunday' && ($hour < 9 || $hour >= 22)) {
-            $message = 'Nažalost, lokal je trenutno zatvoren. Radno vreme je 9:00 - 22:00h.';
+    if ($day === 'Saturday') {
+        $message = 'Nažalost, lokal je zatvoren subotom.';
+    } 
+    elseif ($day === 'Sunday') {
+        if ($currentTime < '11:00' || $currentTime >= '19:45') {
+            $message = 'Nažalost, lokal je trenutno zatvoren. Radno vreme nedeljom je 11:00 - 19:45h.';
         }
-
-        // Prosledi poruku svim view-ovima
-        view()->share('openingMessage', $message);
-
-        return $next($request);
+    } 
+    else {
+        // Radnim danima
+        if ($currentTime < '09:00' || $currentTime >= '21:45') {
+            $message = 'Nažalost, lokal je trenutno zatvoren. Radno vreme je 09:00 - 21:45h.';
+        }
     }
+
+    view()->share('openingMessage', $message);
+
+    return $next($request);
+}
+
 }
