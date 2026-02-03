@@ -126,22 +126,24 @@ Route::middleware([EnsureRestaurantSelected::class])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::get('/korpa', [OrderController::class, 'showCart'])
-    ->name('order.cart');
+            ->name('order.cart');
 
-Route::post('/cart/add', [OrderController::class, 'addToCart'])
-    ->name('cart.add');
+        Route::post('/cart/add', [OrderController::class, 'addToCart'])
+            ->name('cart.add');
 
-Route::delete('/korpa/ukloni/{index}', [OrderController::class, 'removeFromOrder'])
-    ->name('order.remove');
+        Route::delete('/korpa/ukloni/{index}', [OrderController::class, 'removeFromOrder'])
+            ->name('order.remove');
 
-Route::get('/checkout', [OrderController::class, 'checkout'])
-    ->name('order.checkout');
+        Route::get('/checkout', [OrderController::class, 'checkout'])
+            ->middleware('restaurant.open')
+            ->name('order.checkout');
 
-Route::post('/poruci/zavrsi', [OrderController::class, 'submitOrder'])
-    ->name('order.submit');
+        Route::post('/poruci/zavrsi', [OrderController::class, 'submitOrder'])
+            ->middleware('restaurant.open')
+            ->name('order.submit');
 
-Route::get('/thankyou', [OrderController::class, 'thankyou'])
-    ->name('order.thankyou');
+        Route::get('/thankyou', [OrderController::class, 'thankyou'])
+            ->name('order.thankyou');
 
 
 

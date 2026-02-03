@@ -172,31 +172,54 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     form.addEventListener('submit', function (e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            modalInstance.hide();
+        // PRVO PROVERA RADNOG VREMENA
+        fetch('/restaurant/status')
+            .then(res => res.json())
+            .then(status => {
 
-            const cartCount = document.getElementById('cart-count');
-            if (cartCount) {
-                cartCount.textContent = data.cart_count;
-                cartCount.style.display = 'inline-block';
-            }
-        }
-    })
-    .catch(err => {
-        console.error('Greška pri dodavanju u korpu:', err);
+                if (!status.open) {
+
+                    alert(
+                        "⏰ Restoran trenutno ne radi.\n" +
+                        "Poručivanje je moguće od " + status.opens_at
+                    );
+
+                    return;
+                }
+
+                // AKO JE RESTORAN OTVOREN – nastavi normalno dodavanje u korpu
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+
+                    if (data.success) {
+                        modalInstance.hide();
+
+                        const cartCount = document.getElementById('cart-count');
+                        if (cartCount) {
+                            cartCount.textContent = data.cart_count;
+                            cartCount.style.display = 'inline-block';
+                        }
+                    }
+
+                })
+                .catch(err => {
+                    console.error('Greška pri dodavanju u korpu:', err);
+                });
+
+            })
+            .catch(() => {
+                alert("Greška pri proveri radnog vremena.");
+            });
     });
-});
 
 
 

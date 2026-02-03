@@ -12,6 +12,14 @@
 
         $totalOrders = $orders->count();
         $totalSpent = $orders->sum('total_price');
+
+        $statusLabels = [
+            'primljena' => 'Primljena',
+            'u_pripremi' => 'U pripremi',
+            'dostavlja_se' => 'Dostavlja se',
+            'zavrsena' => 'Završena',
+            'rejected' => 'Odbijena',
+        ];
     @endphp
 
 
@@ -39,7 +47,7 @@
                             </span>
 
                             <span class="order-status status-{{ $order->status }}">
-                                {{ ucfirst($order->status) }}
+                                {{ $statusLabels[$order->status] ?? ucfirst($order->status) }}
                             </span>
                         </div>
                     </div>
@@ -109,7 +117,7 @@
                             </span>
 
                             <span class="order-status status-{{ $order->status }}">
-                                {{ ucfirst($order->status) }}
+                                {{ $statusLabels[$order->status] ?? ucfirst($order->status) }}
                             </span>
                         </div>
                     </div>
@@ -118,6 +126,34 @@
                         <span><strong>Datum:</strong> {{ $order->created_at->format('d.m.Y H:i') }}</span>
                         <span><strong>Ukupno:</strong> {{ number_format($order->total_price, 2) }} RSD</span>
                     </div>
+
+
+                    {{-- ===== RAZLOG ODBIJANJA (GLAVNI DEO KOJI TI JE TREBAO) ===== --}}
+                    @if($order->status === 'rejected')
+
+                        <div class="alert alert-danger mt-3 mb-3">
+
+                            <strong>❌ Porudžbina je odbijena</strong>
+
+                            @if($order->rejection_reason)
+                                <div class="mt-2">
+                                    <strong>Razlog:</strong>
+                                    {{ $order->rejection_reason }}
+                                </div>
+                            @endif
+
+                            @if($order->custom_rejection_reason)
+                                <div class="mt-2">
+                                    <strong>Dodatno objašnjenje:</strong><br>
+                                    {{ $order->custom_rejection_reason }}
+                                </div>
+                            @endif
+
+                        </div>
+
+                    @endif
+                    {{-- ===== KRAJ RAZLOGA ODBIJANJA ===== --}}
+
 
                     <div class="order-products">
 
@@ -167,8 +203,6 @@
     color: #333;
 }
 
-/* ==== NASLOVI SEKCIJA ==== */
-
 .section-header {
     background: #e9ecef;
     color: #333;
@@ -183,8 +217,6 @@
     background: #343a40;
     color: white;
 }
-
-/* ==== KARTICE PORUDŽBINA ==== */
 
 .order-card {
     background: #ffffff;
@@ -210,8 +242,6 @@
     font-size: 1.1rem;
 }
 
-/* ==== STATUS ==== */
-
 .order-status {
     padding: 4px 12px;
     border-radius: 20px;
@@ -220,48 +250,16 @@
     text-transform: uppercase;
 }
 
-.status-primljena {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-u_pripremi {
-    background: #d1ecf1;
-    color: #0c5460;
-}
-
-.status-dostavlja_se {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.status-zavrsena {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-odbijena {
+.status-rejected {
     background: #f8d7da;
     color: #721c24;
 }
-
-/* ==== TIP ==== */
 
 .order-type {
     padding: 4px 10px;
     border-radius: 16px;
     font-size: 0.75rem;
     font-weight: 600;
-}
-
-.order-type.delivery {
-    background: #e3f2fd;
-    color: #0d47a1;
-}
-
-.order-type.takeaway {
-    background: #ede7f6;
-    color: #4527a0;
 }
 
 .order-meta {
@@ -272,30 +270,17 @@
     margin-bottom: 15px;
 }
 
-/* ==== STATISTIKA ==== */
-
 .stats-card {
     background: #ffffff;
     border-radius: 12px;
     padding: 20px;
     text-align: center;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.stats-card h5 {
-    color: #555;
-    font-weight: 600;
 }
 
 .stats-value {
     font-size: 1.8rem;
     font-weight: 800;
-    margin-top: 10px;
-    color: #212529;
 }
-
-/* ==== PROIZVODI ==== */
 
 .products-list {
     list-style: none;
@@ -310,12 +295,6 @@
 .order-actions {
     text-align: right;
     margin-bottom: 10px;
-}
-
-.orders-empty {
-    text-align: center;
-    color: #777;
-    margin-top: 20px;
 }
 
 </style>
