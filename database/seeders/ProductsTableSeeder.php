@@ -16,9 +16,8 @@ class ProductsTableSeeder extends Seeder
             ['name' => 'Salata sa susamom', 'description' => 'susam, povrće, kukuruz, začini', 'price_delivery' => 320, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/salata_susam.JPG'],
             ['name' => 'Rolnice sa mesom i povrćem', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/rolnice_meso.JPG'],
             ['name' => 'Rolnice sa povrćem', 'description' => '', 'price_delivery' => 270, 'price_takeaway' => 270, 'category_id' => 1, 'image_path' => 'assets/rolnice_povrce.JPG'],
-            ['name' => 'Rolnice sa čokoladom i višnjom', 'description' => '', 'price_delivery' => 350, 'price_takeaway' => 350, 'category_id' => 1, 'image_path' => 'assets/rolnice-cokolada-visnja.PNG'],
-            ['name' => 'Rolnice sa sirom', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/rolnice-sir.PNG'],
-            ['name' => 'Cips od škampa', 'description' => '', 'price_delivery' => 320, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/cips.jpg'],
+            ['name' => 'Rolnice sa sirom', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/rolnice-sir.png'],
+            ['name' => 'Cips od škampa', 'description' => '', 'price_delivery' => 320, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/cips.JPG'],
 
             // Supe (category_id = 2)
             ['name' => 'Tomato supa', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 2, 'image_path' => 'assets/tomato_supa.JPG'],
@@ -46,6 +45,7 @@ class ProductsTableSeeder extends Seeder
             ['name' => 'Pohovana banana', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 6, 'image_path' => 'assets/poh_banana.JPG'],
             ['name' => 'Pohovana cokolada', 'description' => '', 'price_delivery' => 350, 'price_takeaway' => 350, 'category_id' => 6, 'image_path' => 'assets/poh_cokolada.JPG'],
             ['name' => 'Pohovana jabuka', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 6, 'image_path' => 'assets/poh_jabuka.JPG'],
+            ['name' => 'Rolnice sa čokoladom i višnjom', 'description' => '', 'price_delivery' => 350, 'price_takeaway' => 350, 'category_id' => 6, 'image_path' => 'assets/rolnice-cokolada-visnja.png'],
 
             // Jela sa mesom (category_id = 7)
             ['name' => 'Bambus-Kineske Pecurke', 'description' => 'povrće, šampinjoni, bambus, kineske pečurke, sos', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/bambus_kin_pecurke.JPG'],

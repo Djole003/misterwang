@@ -53,10 +53,42 @@
                                 {{ $product->name }}
                             </h6>
 
-                            <p class="card-text mb-1 fw-bold"
-                               style="font-size:0.75rem; color:#bf360c;">
-                                {{ number_format($product->price, 0) }} RSD
+                            @php
+                                // Da li je kategorija Piće (bez popusta)
+                                $isPice = ($category->slug == 'pice');
+
+                                // Originalna cena pre popusta – poštuje delivery/takeaway
+                                $originalPrice = session('order_type', 'delivery') === 'takeaway'
+                                    ? $product->price_takeaway
+                                    : $product->price_delivery;
+
+                                // Akcijska cena (već uračunat popust kroz accessor)
+                                $discountedPrice = $product->price;
+                            @endphp
+
+                            <p class="card-text mb-1 fw-bold" style="font-size:0.80rem;">
+
+                                @if(!$isPice)
+                                    {{-- STARA CENA – PRECRTANA --}}
+                                    <span style="text-decoration: line-through; color:#888; font-size:0.75rem;">
+                                        {{ number_format($originalPrice, 0) }} RSD
+                                    </span>
+
+                                    <br>
+
+                                    {{-- NOVA CENA --}}
+                                    <span style="color:#d32f2f; font-size:0.85rem;">
+                                        {{ number_format($discountedPrice, 0) }} RSD
+                                    </span>
+                                @else
+                                    {{-- ZA PIĆE – NEMA POPUSTA --}}
+                                    <span style="color:#bf360c;">
+                                        {{ number_format($originalPrice, 0) }} RSD
+                                    </span>
+                                @endif
+
                             </p>
+
                         </div>
                     </a>
 

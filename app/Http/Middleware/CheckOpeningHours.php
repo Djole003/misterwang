@@ -5,35 +5,45 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\RadnoVreme;
 
 class CheckOpeningHours
 {
     public function handle(Request $request, Closure $next)
-{
-    $now = Carbon::now('Europe/Belgrade');
-    $day = $now->format('l');
-    $currentTime = $now->format('H:i');
+    {
+        $now = Carbon::now('Europe/Belgrade');
 
-    $message = null;
+        // Uzimamo ID restorana iz sesije – TAČNO kao u tvom kontroleru
+        $restaurantId = session('restaurant_id');
 
-    if ($day === 'Saturday') {
-        $message = 'Nažalost, lokal je zatvoren subotom.';
-    } 
-    elseif ($day === 'Sunday') {
-        if ($currentTime < '11:00' || $currentTime >= '19:45') {
-            $message = 'Nažalost, lokal je trenutno zatvoren. Radno vreme nedeljom je 11:00 - 19:45h.';
+        // Ako korisnik još nije izabrao lokal, nema provere
+        if (!$restaurantId) {
+            return $next($request);
         }
-    } 
-    else {
-        // Radnim danima
-        if ($currentTime < '09:00' || $currentTime >= '21:45') {
-            $message = 'Nažalost, lokal je trenutno zatvoren. Radno vreme je 09:00 - 21:45h.';
+
+        $dayNumber = $now->dayOfWeek; // 0 = nedelja, 6 = subota
+        $currentTime = $now->format('H:i');
+
+        $radnoVreme = RadnoVreme::where('restaurant_id', $restaurantId)
+            ->where('dan', $dayNumber)
+            ->first();
+
+        $message = null;
+
+        // Ako za taj dan nema radnog vremena ili je null → lokal ne radi
+        if (!$radnoVreme || !$radnoVreme->otvara_se || !$radnoVreme->zatvara_se) {
+            $message = 'Nažalost, lokal danas ne radi.';
+        } else {
+            $otvara = substr($radnoVreme->otvara_se, 0, 5);
+            $zatvara = substr($radnoVreme->zatvara_se, 0, 5);
+
+            if ($currentTime < $otvara || $currentTime >= $zatvara) {
+                $message = "Nažalost, lokal je trenutno zatvoren. Radno vreme danas je {$otvara} - {$zatvara}h.";
+            }
         }
+
+        view()->share('openingMessage', $message);
+
+        return $next($request);
     }
-
-    view()->share('openingMessage', $message);
-
-    return $next($request);
-}
-
 }

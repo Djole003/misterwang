@@ -4,10 +4,6 @@
 @section('content')
 
 
-{{-- =======================
-   HERO SECTION
-======================= --}}
-
 <section class="hero position-relative"
     style="
         border-bottom: 6px solid #ffd600;
@@ -16,10 +12,11 @@
 >
     <div class="hero-image"
          style="background-image: url('{{ asset('assets/hero.jpg') }}'); height: 70vh; background-size: cover; background-position: center;">
-        <div class="hero-overlay d-flex flex-column justify-content-center align-items-center text-white text-center h-100"
-             style="background: rgba(0,0,0,0.4);">
 
-            {{-- SEO H1 --}}
+        <div class="hero-overlay d-flex flex-column justify-content-center align-items-center text-white text-center h-100"
+             style="background: rgba(0,0,0,0.5); padding: 15px;">
+
+            {{-- SEO H1 - OSTAVLJAMO NETAKNUTO --}}
             <h1 class="display-4 fw-bold">
                 Kineski restoran Mister Wang – Online poručivanje
             </h1>
@@ -28,13 +25,45 @@
                 Autentična kineska hrana u Beogradu – brza dostava i vrhunski kvalitet
             </p>
 
+            {{-- ===== PROMO SEKCIJA ZA POPUST ===== --}}
+            <div class="promo-box mt-2 mb-3 p-3"
+                 style="
+                    background: rgba(211,47,47,0.9);
+                    border-radius: 12px;
+                    max-width: 800px;
+                    border: 2px solid #ffd600;
+                    animation: pulse 2s infinite;
+                 ">
+
+                <h2 style="font-weight:800; margin-bottom:5px; font-size:1.6rem;">
+                    🔥 AKCIJA – 15% POPUSTA 🔥
+                </h2>
+
+                <p style="margin-bottom:0; font-size:1rem;">
+                    Ostvarite <strong>15% popusta na ceo asortiman</strong> kineskih specijaliteta.  
+                    Akcija važi za sva jela iz jelovnika <strong>(osim pića)</strong>.
+                </p>
+
+            </div>
+            {{-- ===== KRAJ PROMO SEKCIJE ===== --}}
+
             <a href="{{ route('jelovnik') }}"
                class="btn btn-danger btn-lg open-order-type-modal">
                 Pogledaj jelovnik
             </a>
+
         </div>
     </div>
 </section>
+
+<style>
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+</style>
+
 
 {{-- =======================
    AKCIJA – PRIVREMENI REDIRECT

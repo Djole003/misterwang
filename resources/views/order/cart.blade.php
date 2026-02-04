@@ -201,8 +201,7 @@
                             $addonsIds = $details['addons'] ?? [];
                             $addons = \App\Models\AddOn::whereIn('id', $addonsIds)->pluck('name')->toArray();
 
-                            $orderType = session('order_type', 'delivery');
-                            $basePrice = $orderType === 'delivery' ? $product->price_delivery : $product->price_takeaway;
+                            $basePrice = $product->price;
 
                             // Velika porcija
                             if(($details['size'] ?? null) === 'velika') {

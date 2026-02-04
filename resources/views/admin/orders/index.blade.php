@@ -150,6 +150,22 @@ orderSound.loop = false;
 
 let soundInterval = null;
 
+/* UNLOCK AUDIO FOR TABLET / MOBILE */
+document.addEventListener('DOMContentLoaded', () => {
+    const unlockAudio = () => {
+        orderSound.play().then(() => {
+            orderSound.pause();
+            orderSound.currentTime = 0;
+        }).catch(() => {});
+
+        document.removeEventListener('click', unlockAudio);
+        document.removeEventListener('touchstart', unlockAudio);
+    };
+
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
+});
+
 /* BLINK */
 function startBlink() {
     document.querySelectorAll('.order-card[data-status="primljena"]').forEach(card => {
@@ -167,11 +183,12 @@ function stopBlink() {
 function startSoundLoop() {
     if (soundInterval) return;
 
-    // Prvo trenutno puštanje zvuka
     orderSound.currentTime = 0;
-    orderSound.play().catch(() => {});
 
-    // Ponavljanje na svakih 4 sekunde dok se ne prihvati porudžbina
+    orderSound.play().catch(() => {
+        console.log("Audio blocked - waiting for interaction");
+    });
+
     soundInterval = setInterval(() => {
         orderSound.currentTime = 0;
         orderSound.play().catch(() => {});
@@ -244,7 +261,6 @@ function refreshOrders() {
             '#waiting-column .order-card[data-status="primljena"]'
         );
 
-        // AKO POSTOJI BAR JEDNA PRIMLJENA NARUDŽBINA
         if (waiting.length > 0) {
             startBlink();
             startSoundLoop();
@@ -252,6 +268,9 @@ function refreshOrders() {
             stopBlink();
             stopSoundLoop();
         }
+    })
+    .catch(err => {
+        console.log("Greška pri osvežavanju:", err);
     });
 }
 
@@ -263,7 +282,6 @@ document.addEventListener('click', function (e) {
         selectedOrderId = acceptBtn.dataset.id;
         new bootstrap.Modal(document.getElementById('acceptOrderModal')).show();
 
-        // Kad admin klikne na prihvatanje – gasi se zvuk i blink
         stopBlink();
         stopSoundLoop();
         return;

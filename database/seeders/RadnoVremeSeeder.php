@@ -28,9 +28,9 @@ class RadnoVremeSeeder extends Seeder
 
         /* ======================
            MILJAKOVAC (ID = 1)
-           Radni dani: 09–22
+           Radni dani: 09:00 – 21:40
            Subota: ne radi
-           Nedelja: 11–20
+           Nedelja: 11:30 – 19:30
            ====================== */
 
         foreach ([1,2,3,4,5] as $dan) {
@@ -38,98 +38,74 @@ class RadnoVremeSeeder extends Seeder
                 'restaurant_id' => 1,
                 'dan' => $dan,
                 'otvara_se' => '09:00:00',
-                'zatvara_se' => '22:00:00',
+                'zatvara_se' => '21:40:00',
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
         }
 
+        // Nedelja – posebno vreme
         RadnoVreme::create([
             'restaurant_id' => 1,
             'dan' => 0,
-            'otvara_se' => '11:00:00',
-            'zatvara_se' => '20:00:00',
+            'otvara_se' => '11:30:00',
+            'zatvara_se' => '19:30:00',
             'created_at' => $now,
             'updated_at' => $now,
         ]);
 
-        /* ======================
-           VRAČAR (ID = 2)
-           Svaki dan radi
-           Nedelja: 10–22
-           ====================== */
-
-        foreach ([1,2,3,4,5,6] as $dan) {
-            RadnoVreme::create([
-                'restaurant_id' => 2,
-                'dan' => $dan,
-                'otvara_se' => '09:00:00',
-                'zatvara_se' => '22:00:00',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
-        }
-
+        // Subota – NE RADI (upis bez radnog vremena)
         RadnoVreme::create([
-            'restaurant_id' => 2,
-            'dan' => 0,
-            'otvara_se' => '10:00:00',
-            'zatvara_se' => '22:00:00',
+            'restaurant_id' => 1,
+            'dan' => 6,
+            'otvara_se' => null,
+            'zatvara_se' => null,
             'created_at' => $now,
             'updated_at' => $now,
         ]);
 
         /* ======================
-           SLAVIJA (ID = 3)
-           Radni dani: 09–22
-           Subota: 11–22
+           OSTALI LOKALI (ID 2,3,4...)
+           Radni dani: 10:00 – 21:40
+           Subota: 10:00 – 21:40
            Nedelja: ne radi
            ====================== */
 
-        foreach ([1,2,3,4,5] as $dan) {
+        $ostaliLokali = [2, 3, 4];
+
+        foreach ($ostaliLokali as $lokal) {
+
+            // Radni dani
+            foreach ([1,2,3,4,5] as $dan) {
+                RadnoVreme::create([
+                    'restaurant_id' => $lokal,
+                    'dan' => $dan,
+                    'otvara_se' => '10:00:00',
+                    'zatvara_se' => '21:40:00',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }
+
+            // Subota – radi isto kao radni dan
             RadnoVreme::create([
-                'restaurant_id' => 3,
-                'dan' => $dan,
-                'otvara_se' => '09:00:00',
-                'zatvara_se' => '22:00:00',
+                'restaurant_id' => $lokal,
+                'dan' => 6,
+                'otvara_se' => '10:00:00',
+                'zatvara_se' => '21:40:00',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+
+            // Nedelja – ne radi
+            RadnoVreme::create([
+                'restaurant_id' => $lokal,
+                'dan' => 0,
+                'otvara_se' => null,
+                'zatvara_se' => null,
                 'created_at' => $now,
                 'updated_at' => $now,
             ]);
         }
-
-        RadnoVreme::create([
-            'restaurant_id' => 3,
-            'dan' => 6,
-            'otvara_se' => '11:00:00',
-            'zatvara_se' => '22:00:00',
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
-
-        /* ======================
-           NOVI BEOGRAD (ID = 4)
-           Svaki dan radi
-           Nedelja: 10–22
-           ====================== */
-
-        foreach ([1,2,3,4,5,6] as $dan) {
-            RadnoVreme::create([
-                'restaurant_id' => 4,
-                'dan' => $dan,
-                'otvara_se' => '09:00:00',
-                'zatvara_se' => '22:00:00',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
-        }
-
-        RadnoVreme::create([
-            'restaurant_id' => 4,
-            'dan' => 0,
-            'otvara_se' => '10:00:00',
-            'zatvara_se' => '22:00:00',
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]);
     }
 }

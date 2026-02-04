@@ -196,15 +196,13 @@ class OrderController extends Controller
     private function calculateCartProductsTotal(array $cart): float
     {
         $total = 0;
-        $orderType = session('order_type', 'delivery');
 
         foreach ($cart as $item) {
             $product = Product::find($item['product_id']);
             if (!$product) continue;
 
-            $price = $orderType === 'delivery'
-                ? $product->price_delivery
-                : $product->price_takeaway;
+            // OVA LINIJA ČUVA TVOJU RAZLIKU CENA
+            $price = $product->price;
 
             $details = $item['details'] ?? [];
 
@@ -221,6 +219,7 @@ class OrderController extends Controller
 
         return $total;
     }
+
 
     /**
      * Geokodiranje adrese

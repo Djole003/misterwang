@@ -28,10 +28,26 @@ class Product extends Model
     {
         $type = session('order_type', 'delivery');
 
-        return $type === 'takeaway'
+        $basePrice = $type === 'takeaway'
             ? $this->price_takeaway
             : $this->price_delivery;
+
+        // --- LOGIKA POPUSTA ---
+        $isPice = false;
+
+        if ($this->relationLoaded('category')) {
+            $isPice = ($this->category->slug === 'pice');
+        } elseif ($this->category) {
+            $isPice = ($this->category->slug === 'pice');
+        }
+
+        if (!$isPice) {
+            $basePrice = round($basePrice * 0.85);
+        }
+
+        return $basePrice;
     }
+
 
     /**
      * Veza sa kategorijom
