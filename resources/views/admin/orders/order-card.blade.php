@@ -142,6 +142,7 @@
                         </li>
                     @endif
 
+
                     @if(!empty($d['cutlery']))
                         <li>
                             🍴 <strong>Pribor:</strong>

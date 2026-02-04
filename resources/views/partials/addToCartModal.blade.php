@@ -56,7 +56,7 @@
           </div>
 
           <!-- Mešanje pirinča -->
-          <div class="mb-3" id="riceMixSection" style="display:none;">
+          <div class="mb-3" id="riceMixSection">
               <label class="form-label fw-bold">Da li se meša pirinač u jelo?</label>
               <div class="form-check">
                   <input class="form-check-input" type="radio" name="mix_rice" value="da" id="riceYes">
