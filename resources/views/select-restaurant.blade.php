@@ -51,7 +51,7 @@
 
     <div class="row g-4 justify-content-center">
         @foreach($restaurants as $restaurant)
-            {{-- 2x2 na mobilnom, 4 u redu na desktopu --}}
+
             <div class="col-6 col-md-3">
                 <form method="POST" action="{{ route('select.restaurant.store') }}">
                     @csrf
@@ -60,7 +60,7 @@
                     <div class="card restaurant-card bg-dark text-white"
                          onclick="this.closest('form').submit()">
 
-                        <img src="{{ asset($restaurant->image_path) }}?v=2">
+                        <img src="{{ asset($restaurant->image_path) }}?v=2"
                              class="card-img-top"
                              alt="{{ $restaurant->name }}">
 
@@ -92,6 +92,7 @@
                     </div>
                 </form>
             </div>
+
         @endforeach
     </div>
 </div>
