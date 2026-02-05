@@ -85,12 +85,10 @@
 <form action="{{ route('order.submit') }}" method="POST" class="checkout-form">
 @csrf
 
-{{-- IME --}}
 <label>Ime i prezime</label>
 <input type="text" name="ime" required
        value="{{ old('ime', auth()->user()->name ?? '') }}">
 
-{{-- TELEFON + ADRESA SAMO ZA DELIVERY --}}
 @if($orderType === 'delivery')
 
 <label>Broj telefona</label>
@@ -108,7 +106,15 @@
 
 <div id="delivery-info" class="alert alert-info d-none">
 🚚 Zona: <strong id="zone-name"></strong><br>
-Cena dostave: <strong id="delivery-price"></strong> RSD
+Cena dostave: <strong id="delivery-price"></strong> RSD<br>
+
+<div class="mt-2">
+    Minimalni iznos za ovu zonu:
+    <strong id="zone-minimum"></strong> RSD
+</div>
+
+<div id="minimum-warning" class="alert alert-warning mt-2 d-none"></div>
+
 </div>
 
 <div id="delivery-error" class="alert alert-danger d-none"></div>
@@ -117,12 +123,9 @@ Cena dostave: <strong id="delivery-price"></strong> RSD
 
 @endif
 
-{{-- NAPOMENA --}}
 <label>Napomena (opciono)</label>
-<textarea name="napomena" rows="3"
-placeholder="Npr. stižem za 15 minuta..."></textarea>
+<textarea name="napomena" rows="3"></textarea>
 
-{{-- PREGLED --}}
 <div class="summary-box">
     <div class="summary-item">
         <span>Međuzbir</span>
@@ -155,7 +158,6 @@ Potvrdi porudžbinu
 
 @endsection
 
-{{-- JS SAMO ZA DELIVERY --}}
 @if($orderType === 'delivery')
 @section('scripts')
 <script>
@@ -165,6 +167,9 @@ const addressInput = document.getElementById('addressInput');
 
 const zoneBox = document.getElementById('delivery-info');
 const zoneName = document.getElementById('zone-name');
+const zoneMinimum = document.getElementById('zone-minimum');
+const minimumWarning = document.getElementById('minimum-warning');
+
 const deliveryPriceBox = document.getElementById('delivery-price');
 const deliveryPriceInput = document.getElementById('delivery_price');
 const errorBox = document.getElementById('delivery-error');
@@ -175,7 +180,7 @@ const deliveryRow = document.getElementById('deliveryRow');
 const deliveryRowPrice = document.getElementById('deliveryRowPrice');
 
 confirmBtn.addEventListener('click', () => {
-    fetch("{{ route('delivery.check') }}", {
+    fetch("{{ route('delivery.zone.check') }}", {
         method: "POST",
         headers: {
             "X-CSRF-TOKEN": "{{ csrf_token() }}",
@@ -187,6 +192,7 @@ confirmBtn.addEventListener('click', () => {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
+
             zoneBox.classList.remove('d-none');
             errorBox.classList.add('d-none');
 
@@ -194,11 +200,28 @@ confirmBtn.addEventListener('click', () => {
             deliveryPriceBox.innerText = data.price;
             deliveryPriceInput.value = data.price;
 
+            zoneMinimum.innerText = data.minimum;
+
             deliveryRow.classList.remove('d-none');
             deliveryRowPrice.innerText = data.price;
 
-            grandTotalBox.innerText = productsTotal + parseInt(data.price);
-            submitBtn.disabled = false;
+            const newTotal = productsTotal + parseInt(data.price);
+            grandTotalBox.innerText = newTotal;
+
+            if (productsTotal < data.minimum) {
+                const diff = data.minimum - productsTotal;
+
+                minimumWarning.classList.remove('d-none');
+                minimumWarning.innerText =
+                    "Za ovu zonu potrebno je dodati još " + diff +
+                    " RSD proizvoda do minimalnog iznosa.";
+
+                submitBtn.disabled = true;
+            } else {
+                minimumWarning.classList.add('d-none');
+                submitBtn.disabled = false;
+            }
+
         } else {
             zoneBox.classList.add('d-none');
             errorBox.classList.remove('d-none');

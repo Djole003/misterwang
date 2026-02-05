@@ -77,7 +77,7 @@
                 <p class="mb-3">Izaberi vreme pripreme (minuti)</p>
 
                 <div class="d-flex flex-wrap justify-content-center gap-2">
-                    @foreach([5,10,15,20,25,30,40,50,60] as $min)
+                    @foreach([5,10,15,20,25,30,40,50,60,70] as $min)
                         <button
                             type="button"
                             class="btn btn-outline-primary prep-time-btn"
@@ -309,10 +309,23 @@ document.addEventListener('click', function (e) {
                 'Accept': 'application/json'
             },
             body: JSON.stringify({ minutes })
-        }).then(() => refreshOrders());
+        })
+        .then(() => {
+            // OVDE JE KLJUČ – zatvori modal
+            const modal = bootstrap.Modal.getInstance(
+                document.getElementById('acceptOrderModal')
+            );
+
+            if (modal) {
+                modal.hide();
+            }
+
+            refreshOrders();
+        });
 
         return;
     }
+
 
     const readyBtn = e.target.closest('.mark-ready-btn');
     if (readyBtn) {

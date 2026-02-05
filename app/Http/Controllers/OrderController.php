@@ -129,13 +129,28 @@ class OrderController extends Controller
 
                 if (!$zone) {
                     DB::rollBack();
+
                     return redirect()->back()->withErrors([
                         'adresa' => 'Ne vršimo dostavu na ovu adresu.'
                     ]);
                 }
 
+                // PROVERA MINIMALNOG IZNOSA PO ZONI
+                $productsTotal = $this->calculateCartProductsTotal($cart);
+
+                if ($productsTotal < $zone['minimum']) {
+                    DB::rollBack();
+
+                    return redirect()->back()->withErrors([
+                        'minimum' => 'Minimalni iznos za zonu ' .
+                                    $zone['name'] .
+                                    ' je ' . $zone['minimum'] . ' RSD'
+                    ]);
+                }
+
                 $deliveryPrice = $zone['price'];
                 $deliveryZone  = $zone['name'];
+
             }
 
             $order = Order::create([
@@ -266,6 +281,8 @@ class OrderController extends Controller
 
         $zoneService = new DeliveryZoneService();
         $zone = $zoneService->getZoneForCoordinates($coords[0], $coords[1]);
+        
+
 
         if (!$zone) {
             return response()->json([
@@ -278,6 +295,7 @@ class OrderController extends Controller
             'success' => true,
             'zone'    => $zone['name'],
             'price'   => $zone['price'],
+            'minimum' => $zone['minimum']
         ]);
     }
 

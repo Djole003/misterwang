@@ -13,6 +13,7 @@ class DeliveryZone extends Model
         'center_lng',
         'radius',
         'price',
+        'minimum_amount',
     ];
 
     public function restaurant()

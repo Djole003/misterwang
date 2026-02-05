@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\AddOn; // ⬅⬅⬅ OVO JE FALILO
+use App\Models\AddOn;
 
 class Order extends Model
 {
@@ -12,7 +12,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'restaurant_id', 
+        'restaurant_id',
         'status',
         'total_price',
         'delivery_info',
@@ -41,42 +41,42 @@ class Order extends Model
     /* ================= LOGIKA ================= */
 
     /**
-     * Računa ukupnu cenu porudžbine
+     * Računa ukupnu cenu porudžbine – SA AKCIJSKOM CENOM
      */
     public function calculateTotalPrice(): float
     {
-        // učitaj relacije ako nisu već
         $this->loadMissing('orderProducts.product');
 
         $total = 0;
-        $orderType = $this->order_type ?? 'delivery';
 
         foreach ($this->orderProducts as $item) {
-            if (!$item->product) continue;
 
-            // osnovna cena
-            $price = $orderType === 'delivery'
-                ? $item->product->price_delivery
-                : $item->product->price_takeaway;
+            if (!$item->product) {
+                continue;
+            }
+
+            // KORISTIMO AKCIJSKU CENU PREKO ACCESSORA
+            $price = $item->product->price;
 
             $details = $item->details ?? [];
 
-            // veličina
+            // Velika porcija
             if (($details['size'] ?? null) === 'velika') {
                 $price += 200;
             }
 
-            // dodaci
+            // Dodaci
             if (!empty($details['addons'])) {
                 $addonsTotal = AddOn::whereIn('id', $details['addons'])
                     ->sum('price');
+
                 $price += $addonsTotal;
             }
 
             $total += $price * $item->quantity;
         }
 
-        // dostava
+        // Dodavanje cene dostave
         if ($this->order_type === 'delivery') {
             $total += $this->delivery_price ?? 0;
         }

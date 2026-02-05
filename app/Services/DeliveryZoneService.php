@@ -28,6 +28,7 @@ class DeliveryZoneService
                 return [
                     'name'  => $zone->name,
                     'price' => $zone->price,
+                    'minimum' => $zone->minimum_amount,
                 ];
             }
         }

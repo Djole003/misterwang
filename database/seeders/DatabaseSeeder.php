@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             RadnoVremeSeeder::class,       // 2️⃣ radno vreme po lokalu
             RestaurantStatusSeeder::class, // 3️⃣ status restorana (open/closed)
             DeliveryZonesSeeder::class,
+            DeliveryZoneMinimumSeeder::class,
             /*
             |--------------------------------------------------------------------------
             | KORISNICI

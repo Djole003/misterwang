@@ -13,13 +13,11 @@
         </a>
     </div>
 
-    {{-- SEO NASLOV --}}
     <h1 class="section-title mb-2 text-center"
         style="color:black; font-weight:700;">
         {{ $category->name }} – Mister Wang
     </h1>
 
-    {{-- SEO OPIS --}}
     <p class="text-center mb-4"
        style="color:#4e342e; font-size:0.95rem;">
         Pogledajte ponudu iz kategorije <strong>{{ $category->name }}</strong>
@@ -30,7 +28,6 @@
 
         @foreach($products as $product)
 
-            {{-- PRESKOČI PROIZVODE KOJI NISU DOSTUPNI ZA TRENUTNI LOKAL --}}
             @if(!$product->isAvailableForCurrentRestaurant())
                 @continue
             @endif
@@ -44,7 +41,7 @@
 
                         <img src="{{ asset($product->image_path) }}"
                              class="card-img-top mb-2"
-                             alt="{{ $product->name }} - kinesko jelo Mister Wang"
+                             alt="{{ $product->name }}"
                              style="height:100px; object-fit:cover; border-radius:6px;">
 
                         <div class="card-body p-1">
@@ -54,34 +51,28 @@
                             </h6>
 
                             @php
-                                // Da li je kategorija Piće (bez popusta)
                                 $isPice = ($category->slug == 'pice');
 
-                                // Originalna cena pre popusta – poštuje delivery/takeaway
                                 $originalPrice = session('order_type', 'delivery') === 'takeaway'
                                     ? $product->price_takeaway
                                     : $product->price_delivery;
 
-                                // Akcijska cena (već uračunat popust kroz accessor)
                                 $discountedPrice = $product->price;
                             @endphp
 
                             <p class="card-text mb-1 fw-bold" style="font-size:0.80rem;">
 
                                 @if(!$isPice)
-                                    {{-- STARA CENA – PRECRTANA --}}
                                     <span style="text-decoration: line-through; color:#888; font-size:0.75rem;">
                                         {{ number_format($originalPrice, 0) }} RSD
                                     </span>
 
                                     <br>
 
-                                    {{-- NOVA CENA --}}
                                     <span style="color:#d32f2f; font-size:0.85rem;">
                                         {{ number_format($discountedPrice, 0) }} RSD
                                     </span>
                                 @else
-                                    {{-- ZA PIĆE – NEMA POPUSTA --}}
                                     <span style="color:#bf360c;">
                                         {{ number_format($originalPrice, 0) }} RSD
                                     </span>
@@ -92,54 +83,55 @@
                         </div>
                     </a>
 
-                    <?php
-                    $hideSize = $hideSos = $hideAddons = $hideMeat = 0;
+                    @php
+                        $hideSize = $hideSos = $hideAddons = $hideMeat = $hideMixRice = $hideCutlery = 0;
 
-                    switch($category->slug){
-                        case 'predjela-i-salate':
-                            $hideSize = 1;
-                            $hideSos = 1;
-                            $hideAddons = 1;
-                            $hideMeat = 1;
-                            break;
+                        switch($category->slug){
 
-                        case 'supe':
-                        case 'pirinac-i-nudle':
-                            $hideSize = 1;
-                            $hideSos = 1;
-                            $hideAddons = 0;
-                            $hideMeat = 1;
-                            break;
-
-                        case 'dezerti':
-                        case 'pice':
-                            $hideSize = 1;
-                            $hideSos = 1;
-                            $hideAddons = 1;
-                            $hideMeat = 1;
-                            break;
-
-                        case 'morski-plodovi':
-                        case 'jela-bez-mesa':
-                            $hideSize = 1;
-                            $hideMeat = 1;
-                            break;
-
-                        case 'jela-sa-mesom':
-                            if(in_array($product->name, ['Kung pao piletina', 'Kraljevska Piletina'])){
+                            case 'predjela-i-salate':
+                            case 'supe':
+                            case 'pirinac-i-nudle':
+                            case 'dezerti':
+                                $hideSize = 1;
                                 $hideSos = 1;
+                                $hideAddons = 1;
                                 $hideMeat = 1;
-                            }
-                            break;
+                                $hideMixRice = 1;
+                                $hideCutlery = 1;
+                                break;
 
-                        case 'akcije':
-                            $hideSize = 1;
-                            $hideMeat = 1;
-                            $hideSos = 0;
-                            $hideAddons = 0;
-                            break;
-                    }
-                    ?>
+                            case 'pice':
+                                $hideSize = 1;
+                                $hideSos = 1;
+                                $hideAddons = 1;
+                                $hideMeat = 1;
+                                $hideMixRice = 1;
+                                $hideCutlery = 1;
+                                break;
+
+                            case 'morski-plodovi':
+                            case 'jela-bez-mesa':
+                                $hideSize = 1;
+                                $hideMeat = 1;
+                                $hideMixRice = 1;
+                                break;
+
+                            case 'jela-sa-mesom':
+                                if(in_array($product->name, ['Kung pao piletina', 'Kraljevska Piletina'])){
+                                    $hideSos = 1;
+                                    $hideMeat = 1;
+                                }
+                                break;
+
+                            case 'akcije':
+                                $hideSize = 1;
+                                $hideMeat = 1;
+                                $hideSos = 0;
+                                $hideAddons = 0;
+                                $hideMixRice = 1;
+                                break;
+                        }
+                    @endphp
 
                     <button type="button"
                             class="btn btn-sm btn-success order-btn position-absolute bottom-0 start-50 translate-middle-x mb-2"
@@ -152,7 +144,8 @@
                             data-hide-sos="{{ $hideSos }}"
                             data-hide-addons="{{ $hideAddons }}"
                             data-hide-meat="{{ $hideMeat }}"
-                            data-category="{{ $category->slug }}"
+                            data-hide-mixrice="{{ $hideMixRice }}"
+                            data-hide-cutlery="{{ $hideCutlery }}"
                             style="font-size:0.75rem; padding:4px 8px;">
                         Poruči
                     </button>
@@ -170,8 +163,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     const addToCartModal = document.getElementById('addToCartModal');
-    const modalInstance = new bootstrap.Modal(addToCartModal);
-    const form = document.getElementById('addToCartForm');
 
     document.querySelectorAll('.order-btn').forEach(button => {
         button.addEventListener('click', function () {
@@ -193,77 +184,64 @@ document.addEventListener('DOMContentLoaded', function () {
             const hideSos = this.dataset.hideSos === "1";
             const hideAddons = this.dataset.hideAddons === "1";
             const hideMeat = this.dataset.hideMeat === "1";
+            const hideMixRice = this.dataset.hideMixrice === "1";
+            const hideCutlery = this.dataset.hideCutlery === "1";
 
             document.getElementById('sizeSection').style.display   = hideSize   ? 'none' : 'block';
             document.getElementById('sosSection').style.display    = hideSos    ? 'none' : 'block';
             document.getElementById('addonsSection').style.display = hideAddons ? 'none' : 'block';
             document.getElementById('meatSection').style.display   = hideMeat   ? 'none' : 'block';
 
-            modalInstance.show();
+            const mixRiceSection = document.getElementById('mixRiceSection');
+            if (mixRiceSection) {
+                mixRiceSection.style.display = hideMixRice ? 'none' : 'block';
+            }
+
+            const cutlerySection = document.getElementById('cutlerySection');
+            if (cutlerySection) {
+                cutlerySection.style.display = hideCutlery ? 'none' : 'block';
+            }
         });
     });
+
+    const form = document.getElementById('addToCartForm');
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // PRVO PROVERA RADNOG VREMENA
-        fetch('/restaurant/status')
-            .then(res => res.json())
-            .then(status => {
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
 
-                if (!status.open) {
+            if (data.success) {
 
-                    alert(
-                        "⏰ Restoran trenutno ne radi.\n" +
-                        "Poručivanje je moguće od " + status.opens_at
-                    );
+                const modalEl = document.getElementById('addToCartModal');
+                const existingModal = bootstrap.Modal.getInstance(modalEl);
 
-                    return;
+                if (existingModal) {
+                    existingModal.hide();
                 }
 
-                // AKO JE RESTORAN OTVOREN – nastavi normalno dodavanje u korpu
-                fetch(form.action, {
-                    method: 'POST',
-                    body: new FormData(form),
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
+                const cartCount = document.getElementById('cart-count');
+                if (cartCount) {
+                    cartCount.textContent = data.cart_count;
+                    cartCount.style.display = 'inline-block';
+                }
 
-                    if (data.success) {
-                        modalInstance.hide();
+                form.reset();
+                document.getElementById('totalPrice').innerText = '0';
+            }
 
-                        const cartCount = document.getElementById('cart-count');
-                        if (cartCount) {
-                            cartCount.textContent = data.cart_count;
-                            cartCount.style.display = 'inline-block';
-                        }
-                    }
-
-                })
-                .catch(err => {
-                    console.error('Greška pri dodavanju u korpu:', err);
-                });
-
-            })
-            .catch(() => {
-                alert("Greška pri proveri radnog vremena.");
-            });
-    });
-
-
-
-
-    addToCartModal.addEventListener('hidden.bs.modal', function () {
-        form.reset();
-        document.getElementById('totalPrice').innerText = '0';
-
-        document.querySelectorAll('.addon-checkbox').forEach(cb => cb.checked = false);
-
-        document.body.classList.remove('modal-open');
-        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        })
+        .catch(err => {
+            console.error('Greška pri dodavanju u korpu:', err);
+        });
     });
 
 });

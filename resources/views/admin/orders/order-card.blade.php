@@ -9,7 +9,6 @@
     [$border, $badge, $label] =
         $statusMap[$order->status] ?? ['border-secondary', 'bg-secondary', ucfirst($order->status)];
 
-    // delivery_info može biti string ili array
     $info = $order->delivery_info;
     if (is_string($info)) {
         $info = json_decode($info, true);
@@ -21,16 +20,13 @@
      data-order-id="{{ $order->id }}"
      data-status="{{ $order->status }}">
 
-    {{-- HEADER --}}
     <div class="card-header d-flex justify-content-between align-items-center">
         <strong>#{{ $order->id }}</strong>
         <span class="badge {{ $badge }}">{{ $label }}</span>
     </div>
 
-    {{-- BODY --}}
     <div class="card-body">
 
-        {{-- TIP + CENA --}}
         <div class="d-flex justify-content-between mb-2">
             <div>
                 <strong>📦</strong>
@@ -42,7 +38,6 @@
             </div>
         </div>
 
-        {{-- DOSTAVA --}}
         @if($order->order_type === 'delivery')
             <div class="mb-2 bg-light p-2 rounded">
                 <div><strong>👤</strong> {{ $info['ime'] ?? '—' }}</div>
@@ -59,7 +54,6 @@
             </div>
         @endif
 
-        {{-- AKO JE ODBIJENO – PRIKAZ RAZLOGA --}}
         @if($order->status === 'rejected')
             <div class="alert alert-danger py-2 mb-3">
                 ❌ <strong>Porudžbina je odbijena</strong><br>
@@ -67,7 +61,6 @@
             </div>
         @endif
 
-        {{-- ODBROJAVANJE --}}
         @if($order->status === 'u_pripremi' && $order->ready_at)
             <div class="alert alert-info text-center py-2 mb-2">
                 ⏱️ Preostalo vreme:
@@ -84,7 +77,6 @@
             </div>
         @endif
 
-        {{-- GLAVNA NAPOMENA PORUDŽBINE --}}
         @if(!empty($info['napomena']))
             <div class="alert alert-warning py-2 mb-3">
                 📝 <strong>Napomena uz porudžbinu:</strong><br>
@@ -94,7 +86,6 @@
 
         <hr class="my-2">
 
-        {{-- JELA --}}
         <ul class="list-unstyled mb-0">
         @foreach($order->orderProducts as $item)
 
@@ -105,17 +96,71 @@
                 }
                 $d = $d ?? [];
 
+                $product = $item->product;
+
+                $original = $order->order_type === 'takeaway'
+                    ? $product->price_takeaway
+                    : $product->price_delivery;
+
+                $discounted = $product->price;
+
+                $isPice = ($product->category && $product->category->slug == 'pice');
+
+                $addonsPrice = 0;
                 $addonNames = [];
+
                 if (!empty($d['addons'])) {
+                    $addonsPrice = \App\Models\AddOn::whereIn('id', $d['addons'])->sum('price');
                     $addonNames = \App\Models\AddOn::whereIn('id', $d['addons'])
                         ->pluck('name')
                         ->toArray();
                 }
+
+                $sizeExtra = (!empty($d['size']) && $d['size'] === 'velika') ? 200 : 0;
+
+                $finalPrice = $discounted + $addonsPrice + $sizeExtra;
+
+                $lineTotal = $finalPrice * $item->quantity;
             @endphp
 
             <li class="mb-3">
-                <strong>{{ $item->product->name ?? 'Proizvod' }}</strong>
-                × {{ $item->quantity }}
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>{{ $product->name ?? 'Proizvod' }}</strong>
+                        × {{ $item->quantity }}
+                    </div>
+
+                    <div class="text-end small">
+                        @if(!$isPice)
+                            <span style="text-decoration:line-through;color:gray;">
+                                {{ number_format($original, 0) }} RSD
+                            </span>
+                            <br>
+                            <strong style="color:#d32f2f;">
+                                {{ number_format($discounted, 0) }} RSD
+                            </strong>
+                        @else
+                            <strong>
+                                {{ number_format($original, 0) }} RSD
+                            </strong>
+                        @endif
+                    </div>
+                </div>
+
+                @if($addonsPrice > 0 || $sizeExtra > 0)
+                    <div class="text-end text-muted small">
+                        @if($addonsPrice > 0)
+                            + dodaci: {{ number_format($addonsPrice, 0) }} RSD<br>
+                        @endif
+
+                        @if($sizeExtra > 0)
+                            + velika porcija: 200 RSD<br>
+                        @endif
+
+                        <strong>Ukupno stavka: {{ number_format($lineTotal, 0) }} RSD</strong>
+                    </div>
+                @endif
 
                 <ul class="ps-3 small text-muted mt-1">
 
@@ -135,13 +180,10 @@
                         <li>➕ <strong>Dodaci:</strong> {{ implode(', ', $addonNames) }}</li>
                     @endif
 
-                    @if(isset($d['mix_rice']))
-                        <li>
-                            🍚 <strong>Pirinac:</strong>
-                            {{ $d['mix_rice'] === 'da' ? 'Meša se u jelo' : 'Odvojeno' }}
-                        </li>
+                    {{-- PRIKAZUJEMO SAMO AKO JE IZABRANO DA SE MEŠA PIRINAČ --}}
+                    @if(!empty($d['mix_rice']) && $d['mix_rice'] === 'da')
+                        <li>🍚 <strong>Pirinac:</strong> Meša se u jelo</li>
                     @endif
-
 
                     @if(!empty($d['cutlery']))
                         <li>
@@ -172,6 +214,7 @@
                     @endif
 
                 </ul>
+
             </li>
 
         @endforeach
@@ -179,7 +222,6 @@
 
     </div>
 
-    {{-- FOOTER --}}
     <div class="card-footer text-end">
 
         @if($order->status === 'primljena')
