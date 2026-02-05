@@ -60,7 +60,7 @@
                     <div class="card restaurant-card bg-dark text-white"
                          onclick="this.closest('form').submit()">
 
-                        <img src="{{ asset($restaurant->image_path) }}"
+                        <img src="{{ asset($restaurant->image_path) }}?v=2">
                              class="card-img-top"
                              alt="{{ $restaurant->name }}">
 
