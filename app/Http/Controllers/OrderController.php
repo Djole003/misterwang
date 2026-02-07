@@ -12,9 +12,6 @@ use App\Services\FirebasePushService;
 
 class OrderController extends Controller
 {
-    /**
-     * Dodavanje proizvoda u korpu
-     */
     public function addToCart(Request $request)
     {
         $validator = \Validator::make($request->all(), [
@@ -61,9 +58,6 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Prikaz korpe
-     */
     public function showCart()
     {
         return view('order.cart', [
@@ -71,9 +65,6 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Checkout
-     */
     public function checkout()
     {
         $cart = session('cart', []);
@@ -90,9 +81,6 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Slanje porudžbine
-     */
     public function submitOrder(Request $request)
     {
         $cart = session('cart', []);
@@ -135,7 +123,6 @@ class OrderController extends Controller
                     ]);
                 }
 
-                // PROVERA MINIMALNOG IZNOSA PO ZONI
                 $productsTotal = $this->calculateCartProductsTotal($cart);
 
                 if ($productsTotal < $zone['minimum']) {
@@ -148,14 +135,22 @@ class OrderController extends Controller
                     ]);
                 }
 
-                $deliveryPrice = $zone['price'];
-                $deliveryZone  = $zone['name'];
+                // --- GLAVNA IZMJENA ZA DOSTAVU PO LOKALIMA ---
 
+                $restaurantId = session('restaurant_id');
+
+                if ($restaurantId == 1) {
+                    $deliveryPrice = $zone['price'];
+                } else {
+                    $deliveryPrice = 0;
+                }
+
+                $deliveryZone = $zone['name'];
             }
 
             $order = Order::create([
                 'user_id'        => auth()->id(),
-                'restaurant_id'  => session('restaurant_id'), // ✅ MULTILOKAL – KLJUČNA LINIJA
+                'restaurant_id'  => session('restaurant_id'),
                 'status'         => 'primljena',
                 'order_type'     => $orderType,
                 'total_price'    => 0,
@@ -185,7 +180,6 @@ class OrderController extends Controller
 
             DB::commit();
 
-            // 🔔 Push adminu (ne sme da ruši porudžbinu)
             try {
                 FirebasePushService::sendNewOrderNotification($order->id);
             } catch (\Throwable $e) {
@@ -205,9 +199,6 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Računanje međuzbira proizvoda
-     */
     private function calculateCartProductsTotal(array $cart): float
     {
         $total = 0;
@@ -216,7 +207,6 @@ class OrderController extends Controller
             $product = Product::find($item['product_id']);
             if (!$product) continue;
 
-            // OVA LINIJA ČUVA TVOJU RAZLIKU CENA
             $price = $product->price;
 
             $details = $item['details'] ?? [];
@@ -235,10 +225,6 @@ class OrderController extends Controller
         return $total;
     }
 
-
-    /**
-     * Geokodiranje adrese
-     */
     private function getCoordinatesFromAddress($address)
     {
         $query = urlencode($address . ', Beograd, Srbija');
@@ -262,9 +248,6 @@ class OrderController extends Controller
         ];
     }
 
-    /**
-     * Provera zone dostave
-     */
     public function checkDeliveryZone(Request $request)
     {
         if (!$request->filled('address')) {
@@ -281,8 +264,6 @@ class OrderController extends Controller
 
         $zoneService = new DeliveryZoneService();
         $zone = $zoneService->getZoneForCoordinates($coords[0], $coords[1]);
-        
-
 
         if (!$zone) {
             return response()->json([
@@ -291,17 +272,18 @@ class OrderController extends Controller
             ]);
         }
 
+        $restaurantId = session('restaurant_id');
+
+        $price = ($restaurantId == 1) ? $zone['price'] : 0;
+
         return response()->json([
             'success' => true,
             'zone'    => $zone['name'],
-            'price'   => $zone['price'],
+            'price'   => $price,
             'minimum' => $zone['minimum']
         ]);
     }
 
-    /**
-     * Uklanjanje proizvoda iz korpe
-     */
     public function removeFromOrder($index)
     {
         $cart = session()->get('cart', []);
@@ -320,9 +302,6 @@ class OrderController extends Controller
             ->with('success', 'Proizvod je uklonjen iz korpe.');
     }
 
-    /**
-     * Thank you page
-     */
     public function thankyou()
     {
         return view('order.thankyou');

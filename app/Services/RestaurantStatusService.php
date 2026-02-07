@@ -23,13 +23,21 @@ class RestaurantStatusService
             ->where('dan', $currentDay)
             ->first();
 
-        // Ako nema unosa za taj dan → restoran ne radi taj dan
-        if (!$radnoVreme) {
+        // Ako nema unosa ili su vremena NULL → restoran ne radi taj dan
+        if (
+            !$radnoVreme ||
+            empty($radnoVreme->otvara_se) ||
+            empty($radnoVreme->zatvara_se)
+        ) {
             return false;
         }
 
-        $opens = Carbon::createFromFormat('H:i:s', $radnoVreme->otvara_se);
-        $closes = Carbon::createFromFormat('H:i:s', $radnoVreme->zatvara_se);
+        try {
+            $opens = Carbon::createFromFormat('H:i:s', $radnoVreme->otvara_se);
+            $closes = Carbon::createFromFormat('H:i:s', $radnoVreme->zatvara_se);
+        } catch (\Exception $e) {
+            return false;
+        }
 
         return $now->between($opens, $closes);
     }
@@ -42,10 +50,15 @@ class RestaurantStatusService
             ->where('dan', $currentDay)
             ->first();
 
-        if (!$radnoVreme) {
+        // Ako nema zapisa ili je vreme NULL
+        if (
+            !$radnoVreme ||
+            empty($radnoVreme->otvara_se)
+        ) {
             return null;
         }
 
+        // Vraća samo HH:MM format
         return substr($radnoVreme->otvara_se, 0, 5);
     }
 
