@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use App\Models\Restaurant;
+use App\Models\AddOn;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('*', function ($view) {
+
+            $restaurantId = session('restaurant_id');
+
+            $currentRestaurant = $restaurantId
+                ? Restaurant::find($restaurantId)
+                : null;
+
+            $view->with([
+                'currentRestaurant' => $currentRestaurant,
+                'addons' => AddOn::all()
+            ]);
+        });
     }
 }
