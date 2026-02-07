@@ -2,6 +2,16 @@
 @include('partials.header')
 
 @section('content')
+
+<style>
+    #map {
+        height: 500px !important;
+        width: 100%;
+        min-height: 450px;
+        z-index: 1;
+    }
+</style>
+
 <div class="container contact-container">
 
     {{-- SEO H1 --}}
@@ -55,10 +65,20 @@
         <h2 style="font-size:1.2rem;">
             Lokacija restorana {{ $contact->restaurant->name }}
         </h2>
+
         <p style="font-size:0.9rem; color:#666;">
             Dostava hrane dostupna po zonama za izabrani lokal.
         </p>
-        <div id="map"></div>
+
+        {{-- DEBUG INFO --}}
+        <div class="alert alert-info">
+            <strong>Informacije o zonama:</strong><br>
+            Restoran ID: {{ $contact->restaurant_id }}<br>
+            Broj zona u bazi: {{ count($zones) }}
+        </div>
+
+        <div id="map" style="height: 500px; width: 100%; border-radius:10px; border:1px solid #ddd;"></div>
+
     </div>
 
     {{-- Recenzije --}}
@@ -131,26 +151,38 @@
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // 🟢
-    L.circle(center, { color:'green', fillOpacity:0.25, radius:2000 })
-        .addTo(map).bindPopup("🟢 Zelena zona – 100 RSD");
-
-    // 🟡
-    L.circle(center, { color:'yellow', fillOpacity:0.25, radius:4000 })
-        .addTo(map).bindPopup("🟡 Žuta zona – 150 RSD");
-
-    // 🟠
-    L.circle(center, { color:'orange', fillOpacity:0.25, radius:6000 })
-        .addTo(map).bindPopup("🟠 Narandžasta zona – 200 RSD");
-
-    // 🔴
-    L.circle(center, { color:'red', fillOpacity:0.25, radius:8500 })
-        .addTo(map).bindPopup("🔴 Crvena zona – 250 RSD");
-
+    // Marker restorana
     L.marker(center)
         .addTo(map)
         .bindPopup("<b>{{ $contact->restaurant->name }}</b><br>{{ $contact->address }}")
         .openPopup();
+
+    // Zone iz baze
+    const zones = @json($zones);
+
+    if (zones.length === 0) {
+        console.warn("Nema zona za ovaj restoran!");
+    }
+
+    const colors = ['green', 'yellow', 'orange', 'red', 'purple', 'blue'];
+
+    zones.forEach((zone, index) => {
+
+        const zoneCenter = [zone.center_lat, zone.center_lng];
+
+        L.circle(zoneCenter, {
+            color: colors[index % colors.length],
+            fillOpacity: 0.25,
+            radius: zone.radius
+        })
+        .addTo(map)
+        .bindPopup(
+            `<b>${zone.name}</b><br>
+             Cena dostave: ${zone.price} RSD<br>
+             Minimalno: ${zone.minimum_amount} RSD<br>
+             Radijus: ${zone.radius} m`
+        );
+    });
 </script>
 
 @include('partials.footer')
