@@ -11,13 +11,13 @@ class ProductsTableSeeder extends Seeder
     {
         $products = [
             // Predjela i salate (category_id = 1)
-            ['name' => 'Salata sa algama', 'description' => 'alge, povrće, beli luk, začini', 'price_delivery' => 320, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/salata_sa_algama.JPG'],
-            ['name' => 'Salata sa nudlama', 'description' => 'pirinčane nudle, povrće, začini', 'price_delivery' => 320, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/salata_sa_nudlama.JPG'],
-            ['name' => 'Salata sa susamom', 'description' => 'susam, povrće, kukuruz, začini', 'price_delivery' => 320, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/salata_susam.JPG'],
+            ['name' => 'Salata sa algama', 'description' => 'alge, povrće, beli luk, začini', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/salata_sa_algama.JPG'],
+            ['name' => 'Salata sa nudlama', 'description' => 'pirinčane nudle, povrće, začini', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/salata_sa_nudlama.JPG'],
+            ['name' => 'Salata sa susamom', 'description' => 'susam, povrće, kukuruz, začini', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/salata_susam.JPG'],
             ['name' => 'Rolnice sa mesom i povrćem', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/rolnice_meso.JPG'],
             ['name' => 'Rolnice sa povrćem', 'description' => '', 'price_delivery' => 270, 'price_takeaway' => 270, 'category_id' => 1, 'image_path' => 'assets/rolnice_povrce.JPG'],
             ['name' => 'Rolnice sa sirom', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/rolnice-sir.png'],
-            ['name' => 'Cips od škampa', 'description' => '', 'price_delivery' => 320, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/cips.JPG'],
+            ['name' => 'Cips od škampa', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/cips.JPG'],
 
             // Supe (category_id = 2)
             ['name' => 'Tomato supa', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 2, 'image_path' => 'assets/tomato_supa.JPG'],
@@ -85,10 +85,10 @@ class ProductsTableSeeder extends Seeder
             ['name' => 'Fuze tea višnja', 'description' => '0,5l', 'price_delivery' => 120, 'price_takeaway' => 110, 'category_id' => 8, 'image_path' => 'assets/fuze-tea-visnja.jpg'],
             ['name' => 'Voda', 'description' => '0,5l', 'price_delivery' => 70, 'price_takeaway' => 70, 'category_id' => 8, 'image_path' => 'assets/voda.jpg'],
             ['name' => 'Schweppes', 'description' => '0,33l', 'price_delivery' => 110, 'price_takeaway' => 100, 'category_id' => 8, 'image_path' => 'assets/sveps.jpg'],
-            ['name' => 'Monster žuti', 'description' => '0,5l', 'price_delivery' => 260, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-zuti.jpg'],
-            ['name' => 'Monster beli', 'description' => '0,5l', 'price_delivery' => 260, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-beli.jpg'],
-            ['name' => 'Monster crni', 'description' => '0,5l', 'price_delivery' => 260, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-crni.webp'],
-            ['name' => 'Monster rozi', 'description' => '0,5l', 'price_delivery' => 260, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-rozi.jpg'],
+            ['name' => 'Monster žuti', 'description' => '0,5l', 'price_delivery' => 250, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-zuti.jpg'],
+            ['name' => 'Monster beli', 'description' => '0,5l', 'price_delivery' => 250, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-beli.jpg'],
+            ['name' => 'Monster crni', 'description' => '0,5l', 'price_delivery' => 250, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-crni.webp'],
+            ['name' => 'Monster rozi', 'description' => '0,5l', 'price_delivery' => 250, 'price_takeaway' => 250, 'category_id' => 8, 'image_path' => 'assets/monster-rozi.jpg'],
 
             
             

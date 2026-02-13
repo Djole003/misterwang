@@ -26,8 +26,7 @@
             </div>
         @endif
 
-        {{-- OBRISANO prikazivanje session error poruke
-             jer se već prikazuje u header.blade.php --}}
+        
 
         <main>
             @yield('content')
