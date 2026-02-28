@@ -14,95 +14,107 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </head>
+
 <body>
-    <div class="min-h-screen bg-gray-100">
+<div class="min-h-screen bg-gray-100">
 
-        {{-- Poruka o radnom vremenu – ostaje ovde jer je globalna --}}
-        @if(!empty($openingMessage))
-            <div class="alert alert-danger text-center m-0">
-                {{ $openingMessage }}
-            </div>
-        @endif
+    {{-- Poruka o radnom vremenu --}}
+    @if(!empty($openingMessage))
+        <div class="alert alert-danger text-center m-0">
+            {{ $openingMessage }}
+        </div>
+    @endif
 
-        
+    {{-- GLOBALNE FLASH PORUKE --}}
+    @if(session('error'))
+        <div class="alert alert-danger text-center m-0">
+            {{ session('error') }}
+        </div>
+    @endif
 
-        <main>
-            @yield('content')
-        </main>
-    </div>
+    @if(session('success'))
+        <div class="alert alert-success text-center m-0">
+            {{ session('success') }}
+        </div>
+    @endif
 
-    <!-- Modal za izbor tipa porudžbine -->
-    <div class="modal fade" id="orderTypeModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-4">
+    <main>
+        @yield('content')
+    </main>
+</div>
 
-                <h5 class="modal-title text-center mb-3">
-                    Izaberite tip porudžbine
-                </h5>
+<!-- Modal za izbor tipa porudžbine -->
+<div class="modal fade" id="orderTypeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4">
 
-                <div class="d-flex justify-content-around">
+            <h5 class="modal-title text-center mb-3">
+                Izaberite tip porudžbine
+            </h5>
 
-                    <button type="button"
-                            class="btn btn-danger order-type-btn"
-                            data-type="delivery">
-                        Dostava
-                    </button>
+            <div class="d-flex justify-content-around">
 
-                    <button type="button"
-                            class="btn btn-outline-primary order-type-btn"
-                            data-type="takeaway">
-                        Lično preuzimanje
-                    </button>
+                <button type="button"
+                        class="btn btn-danger order-type-btn"
+                        data-type="delivery">
+                    Dostava
+                </button>
 
-                </div>
+                <button type="button"
+                        class="btn btn-outline-primary order-type-btn"
+                        data-type="takeaway">
+                    Lično preuzimanje
+                </button>
+
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-        const orderLinks = document.querySelectorAll('.open-order-type-modal');
+    const orderLinks = document.querySelectorAll('.open-order-type-modal');
 
-        orderLinks.forEach(link => {
-            link.addEventListener('click', function(e){
-                e.preventDefault();
+    orderLinks.forEach(link => {
+        link.addEventListener('click', function(e){
+            e.preventDefault();
 
-                const targetUrl = link.getAttribute('href');
-                const modalEl = document.getElementById('orderTypeModal');
-                const modal = new bootstrap.Modal(modalEl);
+            const targetUrl = link.getAttribute('href');
+            const modalEl = document.getElementById('orderTypeModal');
+            const modal = new bootstrap.Modal(modalEl);
 
-                modal.show();
+            modal.show();
 
-                document.querySelectorAll('.order-type-btn').forEach(btn => {
-                    btn.onclick = function(ev) {
-                        ev.preventDefault();
-                        const type = btn.dataset.type;
+            document.querySelectorAll('.order-type-btn').forEach(btn => {
+                btn.onclick = function(ev) {
+                    ev.preventDefault();
+                    const type = btn.dataset.type;
 
-                        fetch(`/select-order-type/${type}`)
-                            .then(() => {
-                                modal.hide();
-                                window.location.href = targetUrl;
-                            });
-                    };
-                });
+                    fetch(`/select-order-type/${type}`)
+                        .then(() => {
+                            modal.hide();
+                            window.location.href = targetUrl;
+                        });
+                };
             });
         });
     });
-    </script>
+});
+</script>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('✅ Service Worker registrovan', reg))
-                    .catch(err => console.error('❌ SW greška', err));
-            });
-        }
-    </script>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('✅ Service Worker registrovan', reg))
+            .catch(err => console.error('❌ SW greška', err));
+    });
+}
+</script>
 
-    @yield('scripts')
+@stack('scripts')
+
 </body>
 </html>

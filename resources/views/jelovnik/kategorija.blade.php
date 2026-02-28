@@ -13,16 +13,10 @@
         </a>
     </div>
 
-    <h1 class="section-title mb-2 text-center"
+    <h1 class="section-title mb-4 text-center"
         style="color:black; font-weight:700;">
         {{ $category->name }} – Mister Wang
     </h1>
-
-    <p class="text-center mb-4"
-       style="color:#4e342e; font-size:0.95rem;">
-        Pogledajte ponudu iz kategorije <strong>{{ $category->name }}</strong>
-        u kineskom restoranu Mister Wang. Brza dostava i autentični kineski ukusi.
-    </p>
 
     <div class="row g-3 justify-content-center">
 
@@ -32,220 +26,240 @@
                 @continue
             @endif
 
+            @php
+                $orderType = session('order_type', 'delivery');
+
+                if ($product->pivot && isset($product->pivot->price_delivery)) {
+                    $oldPrice = $orderType === 'takeaway'
+                        ? $product->pivot->price_takeaway
+                        : $product->pivot->price_delivery;
+                } else {
+                    $oldPrice = $orderType === 'takeaway'
+                        ? $product->price_takeaway
+                        : $product->price_delivery;
+                }
+
+                $newPrice = $product->price;
+                $isDiscounted = $oldPrice != $newPrice;
+                $isDrink = $product->category->slug === 'pice';
+            @endphp
+
             <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                <div class="card product-card h-100 text-center position-relative shadow-sm p-2"
-                     style="background-color:#fff8f0; border-radius:10px;">
 
-                    <a href="{{ route('dish.showWithSuggestions', $product->id) }}"
-                       class="text-decoration-none text-dark d-block h-100">
+                <div class="card product-card h-100 shadow-sm position-relative"
+                     onclick="window.location='{{ route('dish.showWithSuggestions', $product->id) }}'"
+                     style="
+                        background-color:#fff8f0;
+                        border-radius:10px;
+                        cursor:pointer;
+                        transition:all 0.2s ease;
+                        overflow:hidden;
+                     "
+                     onmouseover="this.style.transform='translateY(-4px)'"
+                     onmouseout="this.style.transform='translateY(0)'">
 
-                        <img src="{{ asset($product->image_path) }}"
-                             class="card-img-top mb-2"
-                             alt="{{ $product->name }}"
-                             style="height:100px; object-fit:cover; border-radius:6px;">
+                    @if($isDiscounted)
+                        <div style="
+                            position:absolute;
+                            top:6px;
+                            left:6px;
+                            background:#e53935;
+                            color:white;
+                            font-size:0.65rem;
+                            padding:3px 7px;
+                            border-radius:4px;
+                            z-index:2;">
+                            -15%
+                        </div>
+                    @endif
 
-                        <div class="card-body p-1">
-                            <h6 class="card-title mb-1"
-                                style="font-size:0.85rem;">
+                    <img src="{{ asset($product->image_path) }}"
+                         class="card-img-top"
+                         alt="{{ $product->name }}"
+                         style="height:120px; object-fit:cover;">
+
+                    <div class="card-body text-center p-2 d-flex flex-column justify-content-between">
+
+                        <div>
+                            <h6 class="card-title mb-1" style="font-size:0.85rem;">
                                 {{ $product->name }}
                             </h6>
 
-                            @php
-                                $isPice = ($category->slug == 'pice');
+                            @if($isDiscounted)
+                                <p class="mb-0 text-muted"
+                                   style="text-decoration: line-through; font-size:0.75rem;">
+                                    {{ number_format($oldPrice, 0) }} RSD
+                                </p>
 
-                                $originalPrice = session('order_type', 'delivery') === 'takeaway'
-                                    ? $product->price_takeaway
-                                    : $product->price_delivery;
-
-                                $discountedPrice = $product->price;
-                            @endphp
-
-                            <p class="card-text mb-1 fw-bold" style="font-size:0.80rem;">
-
-                                @if(!$isPice)
-                                    <span style="text-decoration: line-through; color:#888; font-size:0.75rem;">
-                                        {{ number_format($originalPrice, 0) }} RSD
-                                    </span>
-
-                                    <br>
-
-                                    <span style="color:#d32f2f; font-size:0.85rem;">
-                                        {{ number_format($discountedPrice, 0) }} RSD
-                                    </span>
-                                @else
-                                    <span style="color:#bf360c;">
-                                        {{ number_format($originalPrice, 0) }} RSD
-                                    </span>
-                                @endif
-
-                            </p>
-
+                                <p class="fw-bold text-danger mb-2"
+                                   style="font-size:0.9rem;">
+                                    {{ number_format($newPrice, 0) }} RSD
+                                </p>
+                            @else
+                                <p class="fw-bold mb-2"
+                                   style="font-size:0.9rem;">
+                                    {{ number_format($newPrice, 0) }} RSD
+                                </p>
+                            @endif
                         </div>
-                    </a>
 
-                    @php
-                        $hideSize = $hideSos = $hideAddons = $hideMeat = $hideMixRice = $hideCutlery = 0;
+                        <button type="button"
+                                class="btn btn-sm btn-success order-btn w-100"
+                                data-bs-toggle="modal"
+                                data-bs-target="#addToCartModal"
+                                onclick="event.stopPropagation();"
+                                data-id="{{ $product->id }}"
+                                data-price="{{ $oldPrice }}"
+                                data-is-drink="{{ $isDrink ? 1 : 0 }}"
+                                data-has-size="{{ $product->has_size }}"
+                                data-has-sos="{{ $product->has_sos }}"
+                                data-has-meat="{{ $product->has_meat }}"
+                                data-has-rice="{{ $product->has_rice_option }}"
+                                data-addons='@json($category->addOns)'
+                                style="font-size:0.75rem;">
+                            Poruči
+                        </button>
 
-                        switch($category->slug){
-
-                            case 'predjela-i-salate':
-                            case 'supe':
-                            case 'pirinac-i-nudle':
-                            case 'dezerti':
-                                $hideSize = 1;
-                                $hideSos = 1;
-                                $hideAddons = 1;
-                                $hideMeat = 1;
-                                $hideMixRice = 1;
-                                $hideCutlery = 1;
-                                break;
-
-                            case 'pice':
-                                $hideSize = 1;
-                                $hideSos = 1;
-                                $hideAddons = 1;
-                                $hideMeat = 1;
-                                $hideMixRice = 1;
-                                $hideCutlery = 1;
-                                break;
-
-                            case 'morski-plodovi':
-                            case 'jela-bez-mesa':
-                                $hideSize = 1;
-                                $hideMeat = 1;
-                                $hideMixRice = 1;
-                                break;
-
-                            case 'jela-sa-mesom':
-                                if(in_array($product->name, ['Kung pao piletina', 'Kraljevska Piletina'])){
-                                    $hideSos = 1;
-                                    $hideMeat = 1;
-                                }
-                                break;
-
-                            case 'akcije':
-                                $hideSize = 1;
-                                $hideMeat = 1;
-                                $hideSos = 0;
-                                $hideAddons = 0;
-                                $hideMixRice = 1;
-                                break;
-                        }
-                    @endphp
-
-                    <button type="button"
-                            class="btn btn-sm btn-success order-btn position-absolute bottom-0 start-50 translate-middle-x mb-2"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addToCartModal"
-                            data-id="{{ $product->id }}"
-                            data-name="{{ $product->name }}"
-                            data-price="{{ $product->price }}"
-                            data-hide-size="{{ $hideSize }}"
-                            data-hide-sos="{{ $hideSos }}"
-                            data-hide-addons="{{ $hideAddons }}"
-                            data-hide-meat="{{ $hideMeat }}"
-                            data-hide-mixrice="{{ $hideMixRice }}"
-                            data-hide-cutlery="{{ $hideCutlery }}"
-                            style="font-size:0.75rem; padding:4px 8px;">
-                        Poruči
-                    </button>
+                    </div>
 
                 </div>
+
             </div>
 
         @endforeach
+
     </div>
 </div>
 
 @include('partials.addToCartModal')
+@include('partials.footer')
 
+@endsection
+
+
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    const addToCartModal = document.getElementById('addToCartModal');
+    const form = document.getElementById('addToCartForm');
+    const productIdInput = document.getElementById('modalProductId');
+    const basePriceInput = document.getElementById('productBasePrice');
+
+    const totalPriceEl = document.getElementById('totalPrice');
+    const quantityInput = document.getElementById('productQuantity');
+    const sizeSelect = document.getElementById('productSize');
+    const sosSelect = document.getElementById('sosSelect');
+    const meatSelect = document.getElementById('meatSelect');
+
+    const sizeSection = document.getElementById('sizeSection');
+    const sosSection = document.getElementById('sosSection');
+    const meatSection = document.getElementById('meatSection');
+    const riceSection = document.getElementById('riceSection');
+    const addonsSection = document.getElementById('addonsSection');
+    const addonsContainer = document.getElementById('addonsContainer');
+
+    let currentConfig = {};
 
     document.querySelectorAll('.order-btn').forEach(button => {
+
         button.addEventListener('click', function () {
 
-            const productId = this.dataset.id;
-            const productName = this.dataset.name;
-            const productPrice = parseFloat(this.dataset.price);
+            productIdInput.value = this.dataset.id;
+            basePriceInput.value = parseFloat(this.dataset.price);
 
-            document.getElementById('modalProductId').value = productId;
-            document.getElementById('productBasePrice').value = productPrice;
+            currentConfig = {
+                hasSize: this.dataset.hasSize === "1",
+                hasSos: this.dataset.hasSos === "1",
+                hasMeat: this.dataset.hasMeat === "1",
+                hasRice: this.dataset.hasRice === "1"
+            };
 
-            addToCartModal.querySelector('.modal-title').textContent =
-                "Dodaj u korpu: " + productName;
+            sizeSection.style.display = currentConfig.hasSize ? 'block' : 'none';
+            sosSection.style.display = currentConfig.hasSos ? 'block' : 'none';
+            meatSection.style.display = currentConfig.hasMeat ? 'block' : 'none';
+            riceSection.style.display = currentConfig.hasRice ? 'block' : 'none';
 
-            document.getElementById('totalPrice').innerText =
-                productPrice.toFixed(0);
+            addonsContainer.innerHTML = '';
 
-            const hideSize = this.dataset.hideSize === "1";
-            const hideSos = this.dataset.hideSos === "1";
-            const hideAddons = this.dataset.hideAddons === "1";
-            const hideMeat = this.dataset.hideMeat === "1";
-            const hideMixRice = this.dataset.hideMixrice === "1";
-            const hideCutlery = this.dataset.hideCutlery === "1";
+            const categoryAddons = JSON.parse(this.dataset.addons || '[]');
 
-            document.getElementById('sizeSection').style.display   = hideSize   ? 'none' : 'block';
-            document.getElementById('sosSection').style.display    = hideSos    ? 'none' : 'block';
-            document.getElementById('addonsSection').style.display = hideAddons ? 'none' : 'block';
-            document.getElementById('meatSection').style.display   = hideMeat   ? 'none' : 'block';
+            if (categoryAddons.length > 0) {
+                addonsSection.style.display = 'block';
 
-            const mixRiceSection = document.getElementById('mixRiceSection');
-            if (mixRiceSection) {
-                mixRiceSection.style.display = hideMixRice ? 'none' : 'block';
+                categoryAddons.forEach(addon => {
+                    const id = "addon_" + addon.id;
+
+                    addonsContainer.innerHTML += `
+                        <div class="form-check">
+                            <input class="form-check-input addon-checkbox"
+                                   type="checkbox"
+                                   id="${id}"
+                                   name="addons[]"
+                                   value="${addon.id}"
+                                   data-price="${addon.price}">
+                            <label class="form-check-label"
+                                   for="${id}"
+                                   style="cursor:pointer;">
+                                ${addon.name} +${addon.price} RSD
+                            </label>
+                        </div>
+                    `;
+                });
+            } else {
+                addonsSection.style.display = 'none';
             }
 
-            const cutlerySection = document.getElementById('cutlerySection');
-            if (cutlerySection) {
-                cutlerySection.style.display = hideCutlery ? 'none' : 'block';
-            }
+            recalcPrice();
         });
+
     });
 
-    const form = document.getElementById('addToCartForm');
+    function recalcPrice() {
+        let base = parseFloat(basePriceInput.value) || 0;
 
-    form.addEventListener('submit', function (e) {
-        e.preventDefault();
+        if (currentConfig.hasSize && sizeSelect.value === 'velika') {
+            base += 200;
+        }
 
-        fetch(form.action, {
-            method: 'POST',
-            body: new FormData(form),
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(res => res.json())
-        .then(data => {
-
-            if (data.success) {
-
-                const modalEl = document.getElementById('addToCartModal');
-                const existingModal = bootstrap.Modal.getInstance(modalEl);
-
-                if (existingModal) {
-                    existingModal.hide();
-                }
-
-                const cartCount = document.getElementById('cart-count');
-                if (cartCount) {
-                    cartCount.textContent = data.cart_count;
-                    cartCount.style.display = 'inline-block';
-                }
-
-                form.reset();
-                document.getElementById('totalPrice').innerText = '0';
-            }
-
-        })
-        .catch(err => {
-            console.error('Greška pri dodavanju u korpu:', err);
+        document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
+            base += parseFloat(cb.dataset.price);
         });
+
+        const qty = parseInt(quantityInput.value) || 1;
+        totalPriceEl.innerText = (base * qty).toFixed(0);
+    }
+
+    document.addEventListener('change', function(e){
+        if(e.target.classList.contains('addon-checkbox') || e.target.id === 'productSize') {
+            recalcPrice();
+        }
+    });
+
+    quantityInput.addEventListener('input', recalcPrice);
+
+    form.addEventListener('submit', function(e){
+
+        if (currentConfig.hasSize && !sizeSelect.value) {
+            e.preventDefault();
+            alert("Izaberite veličinu.");
+            return;
+        }
+
+        if (currentConfig.hasSos && !sosSelect.value) {
+            e.preventDefault();
+            alert("Izaberite sos.");
+            return;
+        }
+
+        if (currentConfig.hasMeat && !meatSelect.value) {
+            e.preventDefault();
+            alert("Izaberite meso.");
+            return;
+        }
+
+
     });
 
 });
 </script>
-
-@include('partials.footer')
-@endsection
+@endpush    

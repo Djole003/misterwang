@@ -19,18 +19,35 @@ class Product extends Model
         'price_takeaway',
         'image_path',
         'category_id',
+        'has_size',
+        'has_sos',
+        'has_meat',
+        'has_rice_option',
     ];
 
-    /**
-     * Accessor za cenu u zavisnosti od tipa porudžbine
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | ACCESSOR ZA CENU (PO LOKALU + POPUST)
+    |--------------------------------------------------------------------------
+    */
     public function getPriceAttribute()
     {
         $type = session('order_type', 'delivery');
+        $restaurantId = session('restaurant_id');
 
-        $basePrice = $type === 'takeaway'
-            ? $this->price_takeaway
-            : $this->price_delivery;
+        // Ako je proizvod učitan preko relacije restorana (pivot postoji)
+        if ($this->pivot && isset($this->pivot->price_delivery)) {
+
+            $basePrice = $type === 'takeaway'
+                ? $this->pivot->price_takeaway
+                : $this->pivot->price_delivery;
+
+        } else {
+            // fallback ako nije učitan preko restorana
+            $basePrice = $type === 'takeaway'
+                ? $this->price_takeaway
+                : $this->price_delivery;
+        }
 
         // --- LOGIKA POPUSTA ---
         $isPice = false;
@@ -41,6 +58,7 @@ class Product extends Model
             $isPice = ($this->category->slug === 'pice');
         }
 
+        // 15% popust osim za piće
         if (!$isPice) {
             $basePrice = round($basePrice * 0.85);
         }
@@ -48,43 +66,33 @@ class Product extends Model
         return $basePrice;
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Veza sa kategorijom
-     */
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Veza sa porudžbinama (many-to-many)
-     */
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'order_product')
             ->withPivot('quantity');
     }
 
-    /**
-     * Veza sa order_product (jedan-na-više)
-     */
     public function orderProducts()
     {
         return $this->hasMany(OrderProduct::class, 'product_id');
     }
 
-    /**
-     * Veza sa dodacima
-     */
     public function addOns()
     {
         return $this->belongsToMany(AddOn::class, 'product_add_on');
     }
 
-    /**
-     * Veza sa statusima proizvoda po lokalu
-     */
     public function restaurantStatuses()
     {
         return $this->hasMany(
@@ -93,16 +101,22 @@ class Product extends Model
         );
     }
 
-    /**
-     * ===============================
-     * DOSTUPNOST PROIZVODA PO LOKALU
-     * ===============================
-     */
+    public function restaurants()
+    {
+        return $this->belongsToMany(Restaurant::class, 'restaurant_product_status')
+            ->withPivot('is_available', 'price_delivery', 'price_takeaway')
+            ->withTimestamps();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOSTUPNOST PROIZVODA PO LOKALU
+    |--------------------------------------------------------------------------
+    */
     public function isAvailableForCurrentRestaurant(): bool
     {
         $restaurantId = session('restaurant_id');
 
-        // Ako nema izabranog lokala → dostupno
         if (!$restaurantId) {
             return true;
         }
@@ -111,7 +125,6 @@ class Product extends Model
             ->where('restaurant_id', $restaurantId)
             ->first();
 
-        // Ako nema zapisa → PODRAZUMEVANO dostupno
         if (!$status) {
             return true;
         }

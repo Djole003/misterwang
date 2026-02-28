@@ -17,17 +17,15 @@ class DeliveryZoneService
         $zones = DeliveryZone::where('restaurant_id', $restaurantId)->get();
 
         foreach ($zones as $zone) {
-            $distance = $this->calculateDistance(
-                $lat,
-                $lng,
-                $zone->center_lat,
-                $zone->center_lng
-            );
 
-            if ($distance <= $zone->radius) {
+            if (!$zone->polygon) {
+                continue;
+            }
+
+            if ($this->pointInPolygon([$lat, $lng], $zone->polygon)) {
                 return [
-                    'name'  => $zone->name,
-                    'price' => $zone->price,
+                    'name'    => $zone->name,
+                    'price'   => $zone->price,
                     'minimum' => $zone->minimum_amount,
                 ];
             }
@@ -36,19 +34,29 @@ class DeliveryZoneService
         return null;
     }
 
-    protected function calculateDistance($lat1, $lng1, $lat2, $lng2)
+    private function pointInPolygon($point, $polygon)
     {
-        $earthRadius = 6371000;
+        $x = $point[0];
+        $y = $point[1];
+        $inside = false;
 
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lng2 - $lng1);
+        $count = count($polygon);
 
-        $a = sin($dLat / 2) * sin($dLat / 2) +
-            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-            sin($dLon / 2) * sin($dLon / 2);
+        for ($i = 0, $j = $count - 1; $i < $count; $j = $i++) {
 
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+            $xi = $polygon[$i]['lat'];
+            $yi = $polygon[$i]['lng'];
+            $xj = $polygon[$j]['lat'];
+            $yj = $polygon[$j]['lng'];
 
-        return $earthRadius * $c;
+            $intersect = (($yi > $y) != ($yj > $y)) &&
+                ($x < ($xj - $xi) * ($y - $yi) / ($yj - $yi) + $xi);
+
+            if ($intersect) {
+                $inside = !$inside;
+            }
+        }
+
+        return $inside;
     }
 }

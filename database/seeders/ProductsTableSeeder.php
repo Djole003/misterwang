@@ -7,6 +7,92 @@ use App\Models\Product;
 
 class ProductsTableSeeder extends Seeder
 {
+    private function getCategoryDefaults($categoryId)
+    {
+        $map = [
+
+            // 1 - Predjela i salate
+            1 => [
+                'has_size' => 0,
+                'has_sos' => 0,
+                'has_meat' => 0,
+                'has_rice_option' => 0,
+            ],
+
+            // 2 - Supe
+            2 => [
+                'has_size' => 0,
+                'has_sos' => 0,
+                'has_meat' => 0,
+                'has_rice_option' => 0,
+            ],
+
+            // 3 - Morski plodovi
+            3 => [
+                'has_size' => 0,
+                'has_sos' => 1,
+                'has_meat' => 0,
+                'has_rice_option' => 1,
+            ],
+
+            // 4 - Jela bez mesa
+            4 => [
+                'has_size' => 0,
+                'has_sos' => 1,
+                'has_meat' => 0,
+                'has_rice_option' => 1,
+            ],
+
+            // 5 - Pirinač i nudle
+            5 => [
+                'has_size' => 0,
+                'has_sos' => 0,
+                'has_meat' => 0,
+                'has_rice_option' => 0,
+            ],
+
+            // 6 - Dezerti
+            6 => [
+                'has_size' => 0,
+                'has_sos' => 0,
+                'has_meat' => 0,
+                'has_rice_option' => 0,
+            ],
+
+            // 7 - Jela sa mesom
+            7 => [
+                'has_size' => 1,
+                'has_sos' => 1,
+                'has_meat' => 1,
+                'has_rice_option' => 1,
+            ],
+
+            // 8 - Pića
+            8 => [
+                'has_size' => 0,
+                'has_sos' => 0,
+                'has_meat' => 0,
+                'has_rice_option' => 0,
+            ],
+
+            // 9 - Akcije
+            9 => [
+                'has_size' => 0,
+                'has_sos' => 0,
+                'has_meat' => 0,
+                'has_rice_option' => 0,
+            ],
+
+        ];
+
+        return $map[$categoryId] ?? [
+            'has_size' => 0,
+            'has_sos' => 0,
+            'has_meat' => 0,
+            'has_rice_option' => 0,
+        ];
+    }
+
     public function run(): void
     {
         $products = [
@@ -18,6 +104,7 @@ class ProductsTableSeeder extends Seeder
             ['name' => 'Rolnice sa povrćem', 'description' => '', 'price_delivery' => 270, 'price_takeaway' => 270, 'category_id' => 1, 'image_path' => 'assets/rolnice_povrce.JPG'],
             ['name' => 'Rolnice sa sirom', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/rolnice-sir.png'],
             ['name' => 'Cips od škampa', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/cips.JPG'],
+            ['name' => 'Rolnice sa jabukama', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 1, 'image_path' => 'assets/rolnice-jabuka.png'],
 
             // Supe (category_id = 2)
             ['name' => 'Tomato supa', 'description' => '', 'price_delivery' => 300, 'price_takeaway' => 300, 'category_id' => 2, 'image_path' => 'assets/tomato_supa.JPG'],
@@ -26,6 +113,7 @@ class ProductsTableSeeder extends Seeder
             // Morski plodovi (category_id = 3)
             ['name' => 'Pohovani riblji file', 'description' => '', 'price_delivery' => 1100, 'price_takeaway' => 1000, 'category_id' => 3, 'image_path' => 'assets/riblji-file.png'],
             ['name' => 'Pohovane lignje', 'description' => '', 'price_delivery' => 1100, 'price_takeaway' => 1000, 'category_id' => 3, 'image_path' => 'assets/pohovane-lignje.png'],
+            ['name' => 'Gambori', 'description' => 'paprika, praziluk, šampinjoni', 'price_delivery' => 1250, 'price_takeaway' => 1200, 'category_id' => 3, 'image_path' => 'assets/gambori.png'],
 
             // Jela bez mesa (category_id = 4)
             ['name' => 'Tofu sir', 'description' => 'tofu, povrće, šampinjoni, sos po želji', 'price_delivery' => 800, 'price_takeaway' => 750, 'category_id' => 4, 'image_path' => 'assets/tofu.png'],
@@ -48,6 +136,9 @@ class ProductsTableSeeder extends Seeder
             ['name' => 'Rolnice sa čokoladom i višnjom', 'description' => '', 'price_delivery' => 350, 'price_takeaway' => 350, 'category_id' => 6, 'image_path' => 'assets/rolnice-cokolada-visnja.png'],
 
             // Jela sa mesom (category_id = 7)
+            ['name' => 'Chow mein', 'description' => '', 'price_delivery' => 850, 'price_takeaway' => 800, 'category_id' => 7, 'image_path' => 'assets/chow-mein.png'],
+            ['name' => 'Hrskava piletina', 'description' => '', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/hrskava.png'],
+            
             ['name' => 'Bambus-Kineske Pecurke', 'description' => 'povrće, šampinjoni, bambus, kineske pečurke, sos', 'price_delivery' => 750, 'price_takeaway' => 700, 'category_id' => 7, 'image_path' => 'assets/bambus_kin_pecurke.JPG'],
             ['name' => 'Meso u kari sosu', 'description' => 'Povrće, sos', 'price_delivery' => 700, 'price_takeaway' => 650, 'category_id' => 7, 'image_path' => 'assets/kari_sos.JPG'],
             ['name' => 'Meso u kiselo ljutom sosu', 'description' => 'Povrće, sos', 'price_delivery' => 700, 'price_takeaway' => 650, 'category_id' => 7, 'image_path' => 'assets/kiselo_ljuti.JPG'],
@@ -108,9 +199,61 @@ class ProductsTableSeeder extends Seeder
         ];
 
 
-
         foreach ($products as $product) {
-            Product::create($product);
+
+            $defaults = $this->getCategoryDefaults($product['category_id']);
+
+            Product::create(array_merge($product, $defaults));
         }
-    }
+
+        // =========================
+        // IZUZECI (OVDE DODAJEMO)
+        // =========================
+
+        // Hrskava piletina – nema izbor mesa ni sosa
+        Product::where('name', 'Hrskava piletina')
+            ->update([
+                'has_meat' => 0,
+            ]);
+
+        // Kung Pao – nema izbor mesa ni sosa
+        Product::where('name', 'Kung pao piletina')
+            ->update([
+                'has_sos' => 0,
+                'has_meat' => 0,
+            ]);
+
+        // Kraljevska – nema izbor mesa
+        Product::where('name', 'Kraljevska Piletina')
+            ->update([
+                'has_sos' => 0,
+                'has_meat' => 0,
+            ]);
+
+
+        Product::where('name', 'Susam piletina')
+            ->update([
+                'has_meat' => 0,
+            ]);
+
+        Product::where('name', 'Chow mein')
+        ->update([
+            'has_meat' => 0,
+        ]);
+        
+        Product::where('name', 'Pohovani komadići')
+        ->update([
+            'has_meat' => 0,
+        ]);
+
+        Product::where('name', 'Meso sa prazilukom u peking sosu')
+        ->update([
+            'has_sos' => 0,
+        ]);
+
+        Product::where('name', 'Meso sa paprikom u peking sosu')
+        ->update([
+            'has_sos' => 0,
+        ]);
+}
 }

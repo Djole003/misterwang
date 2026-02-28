@@ -19,19 +19,19 @@ class DatabaseSeeder extends Seeder
             |--------------------------------------------------------------------------
             */
 
-            RestaurantsSeeder::class,       // 1️⃣ prvo lokali
+            RestaurantsSeeder::class,       
             RestaurantContactsSeeder::class,
-            RadnoVremeSeeder::class,       // 2️⃣ radno vreme po lokalu
-            RestaurantStatusSeeder::class, // 3️⃣ status restorana (open/closed)
+            RadnoVremeSeeder::class,        
+            RestaurantStatusSeeder::class,
             DeliveryZonesSeeder::class,
-            DeliveryZoneMinimumSeeder::class,
+
             /*
             |--------------------------------------------------------------------------
             | KORISNICI
             |--------------------------------------------------------------------------
             */
 
-            UserSeeder::class,              // 4️⃣ editor + admini + user
+            UserSeeder::class,
 
             /*
             |--------------------------------------------------------------------------
@@ -39,17 +39,18 @@ class DatabaseSeeder extends Seeder
             |--------------------------------------------------------------------------
             */
 
-            CategoriesTableSeeder::class,   // 5️⃣ kategorije
-            AddOnSeeder::class,             // 6️⃣ dodaci
-            ProductsTableSeeder::class,     // 7️⃣ proizvodi
+            CategoriesTableSeeder::class,   // 1️⃣ mora prvo kategorije
+            AddOnSeeder::class,             // 2️⃣ pa dodaci
+            ProductsTableSeeder::class,     // 3️⃣ pa proizvodi
+            CategoryAddOnSeeder::class,     // 4️⃣ pa povezivanje kategorija i dodataka
+            RestaurantProductSeeder::class, // 5️⃣ pivot za cene po lokalu
 
             /*
             |--------------------------------------------------------------------------
-            | ❌ NE SEEDUJEMO PORUDŽBINE AUTOMATSKI
+            | TEST PODACI (po potrebi)
             |--------------------------------------------------------------------------
-            | OrderProductSeeder nam treba samo za testiranje,
-            | NE u osnovnom seedingu.
             */
+            // OrderProductSeeder::class,
 
         ]);
     }

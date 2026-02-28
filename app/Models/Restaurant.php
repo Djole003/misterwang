@@ -16,6 +16,25 @@ class Restaurant extends Model
         'is_active',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'restaurant_product_status')
+            ->withPivot('is_available', 'price_delivery', 'price_takeaway')
+            ->withTimestamps();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | BUSINESS LOGIC
+    |--------------------------------------------------------------------------
+    */
+
     public function isOpen()
     {
         // ADMIN ima glavnu kontrolu
@@ -26,5 +45,4 @@ class Restaurant extends Model
         // ako je aktivan → radi
         return true;
     }
-
 }

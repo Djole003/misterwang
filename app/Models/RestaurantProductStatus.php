@@ -12,11 +12,13 @@ class RestaurantProductStatus extends Model
         'restaurant_id',
         'product_id',
         'is_available',
+        'price_delivery',
+        'price_takeaway',
     ];
 
     /*
     |--------------------------------------------------------------------------
-    | RELACIJE
+    | RELATIONS
     |--------------------------------------------------------------------------
     */
 

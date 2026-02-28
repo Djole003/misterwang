@@ -5,24 +5,39 @@
 
 <style>
     #map {
-        height: 500px !important;
+        height: 500px;
         width: 100%;
-        min-height: 450px;
-        z-index: 1;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+    }
+
+    .zone-legend {
+        background: white;
+        padding: 10px 14px;
+        line-height: 1.6;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        font-size: 0.85rem;
+    }
+
+    .zone-color-box {
+        display:inline-block;
+        width:14px;
+        height:14px;
+        margin-right:6px;
+        border-radius:3px;
     }
 </style>
 
 <div class="container contact-container">
 
-    {{-- SEO H1 --}}
     <h1 class="contact-title">
         Kontakt – Mister Wang {{ $contact->restaurant->name ?? '' }}
     </h1>
 
-    {{-- SEO opis --}}
     <p style="max-width:720px; margin:0 auto 30px; color:#555; font-size:0.95rem; text-align:center;">
         Kontaktirajte kineski restoran Mister Wang – {{ $contact->restaurant->name ?? '' }}.
-        Proverite radno vreme, lokaciju i dostavu.
+        Proverite radno vreme, lokaciju i dostavu po zonama.
     </p>
 
     {{-- Kontakt kartice --}}
@@ -60,7 +75,7 @@
         <p>{{ $contact->working_hours ?? 'Radno vreme nije definisano.' }}</p>
     </div>
 
-    {{-- Mapa --}}
+    {{-- MAPA --}}
     <div class="map-container mb-4">
         <h2 style="font-size:1.2rem;">
             Lokacija restorana {{ $contact->restaurant->name }}
@@ -70,15 +85,7 @@
             Dostava hrane dostupna po zonama za izabrani lokal.
         </p>
 
-        {{-- DEBUG INFO --}}
-        <div class="alert alert-info">
-            <strong>Informacije o zonama:</strong><br>
-            Restoran ID: {{ $contact->restaurant_id }}<br>
-            Broj zona u bazi: {{ count($zones) }}
-        </div>
-
-        <div id="map" style="height: 500px; width: 100%; border-radius:10px; border:1px solid #ddd;"></div>
-
+        <div id="map"></div>
     </div>
 
     {{-- Recenzije --}}
@@ -114,7 +121,6 @@
         @endauth
     </div>
 
-    {{-- Prikaz recenzija --}}
     <div class="user-reviews mt-4">
         <h2 style="font-size:1.2rem;">Iskustva korisnika</h2>
 
@@ -134,7 +140,7 @@
 
 </div>
 
-{{-- Leaflet --}}
+{{-- LEAFLET --}}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -144,45 +150,75 @@
         {{ $contact->restaurant->center_lng }}
     ];
 
-    const map = L.map('map').setView(center, 12);
+    const map = L.map('map').setView(center, 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Marker restorana
     L.marker(center)
         .addTo(map)
         .bindPopup("<b>{{ $contact->restaurant->name }}</b><br>{{ $contact->address }}")
         .openPopup();
 
-    // Zone iz baze
     const zones = @json($zones);
 
-    if (zones.length === 0) {
-        console.warn("Nema zona za ovaj restoran!");
+    function getZoneColor(name) {
+        if (name.includes('Zelena')) return '#2ecc71';
+        if (name.includes('Zuta')) return '#f1c40f';
+        if (name.includes('Narandzasta')) return '#e67e22';
+        if (name.includes('Crvena')) return '#e74c3c';
+        return '#3498db';
     }
 
-    const colors = ['green', 'yellow', 'orange', 'red', 'purple', 'blue'];
+    const group = L.featureGroup().addTo(map);
 
-    zones.forEach((zone, index) => {
+    zones.forEach(zone => {
 
-        const zoneCenter = [zone.center_lat, zone.center_lng];
+        if (!zone.polygon) return;
 
-        L.circle(zoneCenter, {
-            color: colors[index % colors.length],
-            fillOpacity: 0.25,
-            radius: zone.radius
-        })
-        .addTo(map)
-        .bindPopup(
-            `<b>${zone.name}</b><br>
-             Cena dostave: ${zone.price} RSD<br>
-             Minimalno: ${zone.minimum_amount} RSD<br>
-             Radijus: ${zone.radius} m`
-        );
+        const polygonData = zone.polygon;
+
+        const coords = polygonData.map(point => [
+            parseFloat(point.lat),
+            parseFloat(point.lng)
+        ]);
+
+        const color = getZoneColor(zone.name);
+
+        const polygon = L.polygon(coords, {
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.35,
+            weight: 2
+        }).addTo(group);
+
+        polygon.bindPopup(`
+            <strong>${zone.name}</strong><br>
+            Minimalna porudžbina: ${zone.minimum_amount} RSD<br>
+            Cena dostave: ${zone.price} RSD
+        `);
     });
+
+    if (group.getLayers().length > 0) {
+        map.fitBounds(group.getBounds());
+    }
+
+    // LEGENDA
+    const legend = L.control({ position: "bottomright" });
+
+    legend.onAdd = function () {
+        const div = L.DomUtil.create("div", "zone-legend");
+        div.innerHTML += "<strong>Zone dostave</strong><br>";
+        div.innerHTML += '<span class="zone-color-box" style="background:#2ecc71"></span>Zelena<br>';
+        div.innerHTML += '<span class="zone-color-box" style="background:#f1c40f"></span>Žuta<br>';
+        div.innerHTML += '<span class="zone-color-box" style="background:#e67e22"></span>Narandžasta<br>';
+        div.innerHTML += '<span class="zone-color-box" style="background:#e74c3c"></span>Crvena';
+        return div;
+    };
+
+    legend.addTo(map);
 </script>
 
 @include('partials.footer')

@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('add_ons', function (Blueprint $table) {
             $table->id();
-            $table->string('name');      // Ova kolona mora biti tu
-            $table->decimal('price', 8,2); // Ova kolona mora biti tu
+            $table->string('name');
+            $table->integer('price');
             $table->timestamps();
         });
     }

@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Restaurant;
 use App\Models\AddOn;
+use App\Models\RestaurantContact;
+use App\Models\DeliveryZone;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,9 +32,21 @@ class AppServiceProvider extends ServiceProvider
                 ? Restaurant::find($restaurantId)
                 : null;
 
+            // 🔹 KONTAKT PODACI ZA FOOTER
+            $restaurantContact = $restaurantId
+                ? RestaurantContact::where('restaurant_id', $restaurantId)->first()
+                : null;
+
+            // 🔹 ZONE ZA MAPU
+            $deliveryZones = $restaurantId
+                ? DeliveryZone::where('restaurant_id', $restaurantId)->get()
+                : collect();
+
             $view->with([
                 'currentRestaurant' => $currentRestaurant,
-                'addons' => AddOn::all()
+                'restaurantContact' => $restaurantContact,
+                'deliveryZones'     => $deliveryZones,
+                'addons'            => AddOn::all()
             ]);
         });
     }

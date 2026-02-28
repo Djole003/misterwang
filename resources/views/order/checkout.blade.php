@@ -159,7 +159,7 @@ Potvrdi porudžbinu
 @endsection
 
 @if($orderType === 'delivery')
-@section('scripts')
+@push('scripts')
 <script>
 const confirmBtn = document.getElementById('confirmAddressBtn');
 const submitBtn = document.getElementById('submitOrderBtn');
@@ -234,5 +234,5 @@ confirmBtn.addEventListener('click', () => {
     });
 });
 </script>
-@endsection
+@endpush
 @endif

@@ -27,10 +27,15 @@ class OrderController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors'  => $validator->errors(),
-            ], 422);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors'  => $validator->errors(),
+                ], 422);
+            }
+
+            return redirect()->back()->withErrors($validator);
         }
 
         $product = Product::findOrFail($request->product_id);
@@ -52,10 +57,15 @@ class OrderController extends Controller
 
         session(['cart' => $cart]);
 
-        return response()->json([
-            'success'    => true,
-            'cart_count' => count($cart),
-        ]);
+        // 🔥 KLJUČNO
+        if ($request->ajax()) {
+            return response()->json([
+                'success'    => true,
+                'cart_count' => count($cart),
+            ]);
+        }
+
+        return back()->with('success', 'Proizvod je dodat u korpu.');
     }
 
     public function showCart()

@@ -9,11 +9,13 @@ class DeliveryZone extends Model
     protected $fillable = [
         'restaurant_id',
         'name',
-        'center_lat',
-        'center_lng',
-        'radius',
+        'polygon',
         'price',
         'minimum_amount',
+    ];
+
+    protected $casts = [
+        'polygon' => 'array',
     ];
 
     public function restaurant()

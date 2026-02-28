@@ -4,7 +4,11 @@
 
             {{-- LOGO + OPIS --}}
             <div class="col-md-4 mb-4 text-center text-md-start">
-                <img src="{{ asset('assets/logo.png') }}" alt="Mister Wang Logo" height="60" class="mb-3">
+                <img src="{{ asset('assets/logo.png') }}" 
+                     alt="Mister Wang Logo" 
+                     height="60" 
+                     class="mb-3">
+
                 <p class="text-secondary small">
                     Autentična kineska kuhinja <br>
                     Brza dostava i kvalitetni sastojci.
@@ -13,30 +17,61 @@
 
             {{-- KONTAKT --}}
             <div class="col-md-4 mb-4 text-center text-md-start">
-                <h6 class="fw-bold mb-3">Kontakt</h6>
-                <p class="mb-1">📞 <a href="tel:0654522157" class="text-white text-decoration-none">064 52 14 800</a></p>
-                <p class="mb-1">📞 <a href="tel:0654522157" class="text-white text-decoration-none">064 52 14 802</a></p>
-                <p class="mb-1">✉️ <a href="mailto:djordjekitic2003@gmail.com" class="text-white text-decoration-none">djordjekitic2003@gmail.com</a></p>
+                <h6 class="fw-bold mb-3">
+                    Kontakt – {{ $currentRestaurant->name ?? '' }}
+                </h6>
 
-                {{-- RADNO VREME --}}
-                <h6 class="fw-bold mt-3 mb-2">Radno vreme</h6>
-                <p class="mb-1">Radnim danima: 9-22h</p>
-                <p class="mb-1">Nedelja: 11-20h</p>
-                <p class="mb-1">Subota: Ne radimo</p>
+                @if($restaurantContact)
+
+                    <p class="mb-1">
+                        📞 
+                        <a href="tel:{{ preg_replace('/\s+/', '', $restaurantContact->phone) }}"
+                           class="text-white text-decoration-none">
+                            {{ $restaurantContact->phone }}
+                        </a>
+                    </p>
+
+                    @if($restaurantContact->email)
+                        <p class="mb-1">
+                            ✉️ 
+                            <a href="mailto:{{ $restaurantContact->email }}"
+                               class="text-white text-decoration-none">
+                                {{ $restaurantContact->email }}
+                            </a>
+                        </p>
+                    @endif
+
+                    <p class="mb-1">
+                        📍 {{ $restaurantContact->address }}
+                    </p>
+
+                    {{-- RADNO VREME --}}
+                    <h6 class="fw-bold mt-3 mb-2">Radno vreme</h6>
+                    <p class="mb-1">
+                        {{ $restaurantContact->working_hours }}
+                    </p>
+
+                @else
+                    <p>Podaci nisu dostupni.</p>
+                @endif
             </div>
 
             {{-- DRUŠTVENE MREŽE --}}
             <div class="col-md-4 mb-4 text-center text-md-start">
                 <h6 class="fw-bold mb-3">Pratite nas</h6>
-                <a href="https://www.instagram.com/mister_wang_2_miljakovac/" target="_blank"
+
+                <a href="https://www.instagram.com/mister_wang_2_miljakovac/"
+                   target="_blank"
                    class="text-white text-decoration-none d-inline-flex align-items-center gap-2 mb-2">
                     <i class="fab fa-instagram fa-lg"></i> Instagram
                 </a><br>
-                <a href="#" target="_blank"
+
+                <a href="#"
                    class="text-white text-decoration-none d-inline-flex align-items-center gap-2 mb-2">
                     <i class="fab fa-facebook fa-lg"></i> Facebook
                 </a><br>
-                <a href="#" target="_blank"
+
+                <a href="#"
                    class="text-white text-decoration-none d-inline-flex align-items-center gap-2">
                     <i class="fab fa-linkedin fa-lg"></i> LinkedIn
                 </a>
@@ -53,75 +88,114 @@
     </div>
 </footer>
 
-
 <style>
-    /* Footer pozadina i tekst */
-    footer {
-        background: #1a1a1a; /* tamnija nijansa crne */
-        color: #fff;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+/* ===== FOOTER BASE ===== */
+footer {
+    background: linear-gradient(135deg, #1a1a1a, #111);
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+}
+
+/* Logo hover */
+footer img {
+    transition: transform 0.3s ease;
+}
+
+footer img:hover {
+    transform: scale(1.08);
+}
+
+/* Naslovi */
+footer h6 {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    position: relative;
+}
+
+/* Mala crvena linija ispod naslova */
+footer h6::after {
+    content: "";
+    width: 35px;
+    height: 2px;
+    background: #e53935;
+    display: block;
+    margin-top: 6px;
+}
+
+/* Tekst */
+footer p {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+/* Linkovi */
+footer a {
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+footer a:hover {
+    color: #ff6b6b;
+    transform: translateX(4px);
+    text-decoration: none;
+}
+
+/* Social ikone */
+footer i.fab {
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+footer a:hover i.fab {
+    transform: scale(1.2);
+    color: #ff6b6b;
+}
+
+/* Horizontalna linija */
+footer hr {
+    border-color: #333;
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+/* Copyright */
+footer .text-center.text-secondary {
+    color: #777 !important;
+    font-size: 0.85rem;
+}
+
+/* ===== ANIMACIJA ULASKA ===== */
+footer .row > div {
+    transition: transform 0.3s ease;
+}
+
+footer .row > div:hover {
+    transform: translateY(-3px);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+
+    footer .row {
+        text-align: center;
     }
 
-    /* Logo */
-    footer img {
-        transition: transform 0.3s;
+    footer .col-md-4 {
+        margin-bottom: 25px;
     }
 
-    footer img:hover {
-        transform: scale(1.1);
+    footer h6::after {
+        margin-left: auto;
+        margin-right: auto;
     }
+}
 
-    /* Naslovi u footeru */
-    footer h6 {
-        color: #fff;
-        letter-spacing: 0.5px;
-    }
+/* ===== BLAGI GLOW EFEKAT NA HOVER ===== */
+footer a:hover {
+    text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+}
 
-    /* Linkovi */
-    footer a {
-        color: #fff;
-        transition: color 0.3s, transform 0.3s;
-    }
-
-    footer a:hover {
-        color: #ff6b6b; /* crveno-roza boja pri hoveru */
-        transform: translateX(5px);
-        text-decoration: none;
-    }
-
-    /* Ikonice društvenih mreža */
-    footer i.fab {
-        transition: transform 0.3s, color 0.3s;
-    }
-
-    footer a:hover i.fab {
-        color: #ff6b6b;
-        transform: scale(1.2);
-    }
-
-    /* Radno vreme i kontakt */
-    footer p {
-        color: #ccc;
-    }
-
-    /* Linija ispod */
-    footer hr {
-        border-color: #444;
-    }
-
-    /* Copyright */
-    footer .text-center.text-secondary {
-        color: #888;
-        margin-top: 10px;
-    }
-
-    /* Responsivnost */
-    @media (max-width: 768px) {
-        footer .row {
-            text-align: center;
-        }
-        footer .col-md-4 {
-            margin-bottom: 20px;
-        }
-    }
 </style>

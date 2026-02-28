@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\AddOn;
 
 class Category extends Model
 {
@@ -23,5 +24,13 @@ class Category extends Model
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    /**
+     * VEZA SA DODACIMA (NOVO)
+     */
+    public function addOns()
+    {
+        return $this->belongsToMany(AddOn::class, 'category_add_on');
     }
 }

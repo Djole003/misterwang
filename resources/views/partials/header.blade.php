@@ -99,7 +99,11 @@
 
 
 <li class="nav-item">
-    <a class="nav-link nav-click" href="/jelovnik">Jelovnik</a>
+    <a href="{{ route('jelovnik') }}"
+        class="nav-link nav-click open-order-type-modal">
+        Jelovnik
+    </a>
+
 </li>
 
 <li class="nav-item">

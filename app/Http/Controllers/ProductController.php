@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\AddOn;
 use App\Models\Category;
+use App\Models\Restaurant;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -22,21 +23,24 @@ class ProductController extends Controller
      */
     public function jelovnikPoKategorijama()
     {
-        // Svi proizvodi sa kategorijama učitanim
-        $products = Product::with('category')->get();
+        $restaurantId = session('restaurant_id');
 
-        // Dodaci
-        $addons = AddOn::all();
+        if (!$restaurantId) {
+            abort(404);
+        }
 
-        // Grupisanje po kategorijama
-        $productsByCategory = $products->groupBy(function($product){
+        $restaurant = Restaurant::with('products.category')
+            ->findOrFail($restaurantId);
+
+        $products = $restaurant->products;
+
+        $productsByCategory = $products->groupBy(function ($product) {
             return $product->category->name;
         });
 
-        // Lista kategorija
         $categories = Category::all();
 
-        return view('jelovnik.jelovnik', compact('productsByCategory', 'addons', 'categories'));
+        return view('jelovnik.jelovnik', compact('productsByCategory', 'categories'));
     }
 
     /**
@@ -44,42 +48,65 @@ class ProductController extends Controller
      */
     public function showWithSuggestions($id)
     {
-        $orderType = session('order_type', 'delivery'); // uzimamo tip porudžbine iz sessiona
+        $restaurantId = session('restaurant_id');
 
-        $jelo = Product::findOrFail($id);
+        if (!$restaurantId) {
+            abort(404);
+        }
 
-        // Prava cena zavisno od tipa porudžbine
-        $jelo->display_price = $orderType === 'delivery' ? $jelo->price_delivery : $jelo->price_takeaway;
+        $restaurant = Restaurant::with('products.category')
+            ->findOrFail($restaurantId);
 
-        $pice = Product::whereHas('category', function($q){
-                    $q->where('name', 'Piće');
-                })->where('id', '!=', $id)
-                ->take(3)
-                ->get();
+        $jelo = $restaurant->products->where('id', $id)->firstOrFail();
 
-        $dezerti = Product::whereHas('category', function($q){
-                    $q->where('name', 'Dezerti');
-                })->where('id', '!=', $id)
-                ->take(3)
-                ->get();
+        $orderType = session('order_type', 'delivery');
 
-        $preporuceno = Product::where('id', '!=', $id)
-            ->inRandomOrder()
-            ->take(4)
-            ->get();
+        $pice = $restaurant->products
+            ->where('category.name', 'Piće')
+            ->where('id', '!=', $id)
+            ->take(3);
 
-        return view('jelovnik.show_with_suggestions', compact('jelo', 'pice', 'dezerti', 'preporuceno', 'orderType'));
+        $dezerti = $restaurant->products
+            ->where('category.name', 'Dezerti')
+            ->where('id', '!=', $id)
+            ->take(3);
+
+        $preporuceno = $restaurant->products
+            ->where('id', '!=', $id)
+            ->shuffle()
+            ->take(4);
+
+        return view('jelovnik.show_with_suggestions', compact(
+            'jelo',
+            'pice',
+            'dezerti',
+            'preporuceno',
+            'orderType'
+        ));
     }
-
 
     /**
      * Prikaz proizvoda po kategoriji
      */
     public function showCategory($slug)
     {
-        $category = Category::where('slug', $slug)->firstOrFail();
-        $products = $category->products;
-        $addons = AddOn::all();
-        return view('jelovnik.kategorija', compact('category', 'products', 'addons'));
+        $restaurantId = session('restaurant_id');
+
+        if (!$restaurantId) {
+            abort(404);
+        }
+
+        $restaurant = Restaurant::with('products.category')
+            ->findOrFail($restaurantId);
+
+        // 👇 UČITAVAMO I ADDONS RELACIJU
+        $category = Category::where('slug', $slug)
+            ->with('addOns')
+            ->firstOrFail();
+
+        $products = $restaurant->products
+            ->where('category_id', $category->id);
+
+        return view('jelovnik.kategorija', compact('category', 'products'));
     }
 }
