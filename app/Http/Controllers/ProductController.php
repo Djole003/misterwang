@@ -29,18 +29,34 @@ class ProductController extends Controller
             abort(404);
         }
 
-        $restaurant = Restaurant::with('products.category')
-            ->findOrFail($restaurantId);
+        $restaurant = Restaurant::with([
+            'products.category',
+            'products.category.addOns'
+        ])->findOrFail($restaurantId);
 
         $products = $restaurant->products;
 
+        // grupisanje po kategorijama
         $productsByCategory = $products->groupBy(function ($product) {
-            return $product->category->name;
+            return $product->category->id;
         });
 
-        $categories = Category::all();
+        // sve kategorije + addons
+        $categories = Category::with('addOns')->get();
 
-        return view('jelovnik.jelovnik', compact('productsByCategory', 'categories'));
+        $najprodavanija = $restaurant->products->whereIn('name', [
+            'Mesano povrće',
+            'Hrskava piletina',
+            'Kung pao piletina',
+            'Kraljevska Piletina',
+            'Meso sa sampinjonima'
+        ]);
+
+        return view('jelovnik.jelovnik', compact(
+            'productsByCategory',
+            'categories',
+            'najprodavanija'
+        ));
     }
 
     /**

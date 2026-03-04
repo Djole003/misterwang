@@ -13,7 +13,7 @@ class CategoryAddOnSeeder extends Seeder
         // Kategorije koje imaju dodatke
         $categoryIds = [7, 3, 4]; 
         // 7 = Jela sa mesom
-        // 3 = Morski plodovi
+        // 3 =  Morski plodovi
         // 4 = Jela bez mesa
 
         $addons = AddOn::all();
