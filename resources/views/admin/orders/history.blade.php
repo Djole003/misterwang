@@ -5,6 +5,14 @@
 
 @section('content')
 
+
+<style>
+    tbody tr:hover {
+        background-color: #f8f9fa;
+        transition: 0.2s;
+    }
+</style>
+
 <h4 class="mb-3">📜 Pregled narudžbina</h4>
 
 {{-- 💰 PAZAR --}}
@@ -26,7 +34,6 @@
         </div>
     </div>
 </div>
-
 
 {{-- FILTERI --}}
 <div class="card mb-3">
@@ -69,24 +76,43 @@
         </thead>
         <tbody>
             @forelse($orders as $order)
-                <tr>
-                    <td>#{{ $order->id }}</td>
-                    <td>{{ $order->name ?? '-' }}</td>
-                    <td>{{ strtoupper($order->order_type) }}</td>
-                    <td>{{ number_format($order->total_price) }} RSD</td>
-                    <td>
-                        <span class="badge bg-secondary">
-                            {{ $order->status }}
-                        </span>
-                    </td>
-                    <td>{{ $order->created_at->format('d.m.Y H:i') }}</td>
-                </tr>
+            <tr onclick="showOrder({{ $order->id }})"
+                style="cursor: pointer;">
+
+                <td>#{{ $order->id }}</td>
+
+                <td>{{ $order->name ?? '-' }}</td>
+
+                <td>{{ strtoupper($order->order_type) }}</td>
+
+                <td>{{ number_format($order->total_price) }} RSD</td>
+
+                <td>
+                    @php
+                        $statusClass = match($order->status) {
+                            'zavrsena' => 'bg-success',
+                            'dostavlja_se' => 'bg-warning text-dark',
+                            'u_pripremi' => 'bg-primary',
+                            'primljena' => 'bg-secondary',
+                            'rejected' => 'bg-danger',
+                            default => 'bg-dark'
+                        };
+                    @endphp
+
+                    <span class="badge {{ $statusClass }}">
+                        {{ $order->status }}
+                    </span>
+                </td>
+
+                <td>{{ $order->created_at->format('d.m.Y H:i') }}</td>
+
+            </tr>
             @empty
-                <tr>
-                    <td colspan="6" class="text-center text-muted">
-                        Nema narudžbina
-                    </td>
-                </tr>
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    Nema narudžbina
+                </td>
+            </tr>
             @endforelse
         </tbody>
     </table>
@@ -95,5 +121,68 @@
 <div class="mt-3">
     {{ $orders->links() }}
 </div>
+
+{{-- MODAL --}}
+<div class="modal fade" id="orderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">🧾 Detalji narudžbine</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="orderDetails">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary"></div>
+                    <p class="mt-2">Učitavanje...</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{{-- CSS --}}
+<style>
+    .modal-body ul {
+        padding-left: 20px;
+    }
+
+    .modal-body li {
+        margin-bottom: 6px;
+    }
+</style>
+
+{{-- JS --}}
+<script>
+function showOrder(id) {
+
+    // loading spinner
+    document.getElementById('orderDetails').innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-2">Učitavanje...</p>
+        </div>
+    `;
+
+    fetch('/admin/orders/' + id + '/details')
+        .then(res => res.text())
+        .then(html => {
+
+            document.getElementById('orderDetails').innerHTML = html;
+
+            let modal = new bootstrap.Modal(document.getElementById('orderModal'));
+            modal.show();
+        })
+        .catch(err => {
+            document.getElementById('orderDetails').innerHTML = `
+                <div class="text-danger text-center">
+                    Greška pri učitavanju
+                </div>
+            `;
+        });
+}
+</script>
 
 @endsection

@@ -104,6 +104,80 @@ class AdminOrderController extends Controller
         ));
     }
 
+
+    /**
+     * ============================
+     * DETALJI NARUDŽBINE (MODAL)
+     * ============================
+     */
+    public function show($id)
+    {
+        $query = Order::with('orderProducts.product');
+
+        // 🔒 ADMIN vidi samo svoj restoran
+        if (auth()->user()->role === 'admin') {
+            $query->where('restaurant_id', auth()->user()->restaurant_id);
+        }
+
+        $order = $query->findOrFail($id);
+
+        $html = "
+            <h5 class='mb-3'>🧾 Narudžbina #{$order->id}</h5>
+
+            <div class='mb-2'><b>Kupac:</b> " . ($order->name ?? '-') . "</div>
+            <div class='mb-2'><b>Status:</b> {$order->status}</div>
+            <div class='mb-2'><b>Tip:</b> {$order->order_type}</div>
+            <div class='mb-2'><b>Ukupno:</b> " . number_format($order->total_price) . " RSD</div>
+
+            <hr>
+
+            <h6 class='mb-3'>🍔 Proizvodi:</h6>
+            <ul class='list-group'>
+        ";
+
+        foreach ($order->orderProducts as $item) {
+
+            $naziv = $item->product->naziv 
+                ?? $item->product->name 
+                ?? 'Proizvod';
+
+            // 🔥 SIGURNO PARSIRANJE (radi i ako je array i ako je JSON)
+            $details = $item->details ?? [];
+
+            if (!is_array($details)) {
+                $details = json_decode($details, true) ?? [];
+            }
+
+            // 🧠 priprema teksta
+            $size   = !empty($details['size']) ? "📏 {$details['size']}" : '';
+            $sos    = !empty($details['sos']) ? "🥫 {$details['sos']}" : '';
+            $meat   = !empty($details['meat']) ? "🍗 {$details['meat']}" : '';
+            $addons = (!empty($details['addons']) && is_array($details['addons']))
+                ? "➕ " . implode(', ', $details['addons'])
+                : '';
+
+            $html .= "
+                <li class='list-group-item'>
+                    <div class='d-flex justify-content-between'>
+                        <strong>{$naziv}</strong>
+                        <span>x {$item->quantity}</span>
+                    </div>
+
+                    <div class='text-muted small mt-1'>
+                        " . ($size ? $size . "<br>" : "") . "
+                        " . ($sos ? $sos . "<br>" : "") . "
+                        " . ($meat ? $meat . "<br>" : "") . "
+                        " . ($addons ? $addons : "") . "
+                    </div>
+                </li>
+            ";
+        }
+
+        $html .= "</ul>";
+
+        return $html;
+    }
+
     /**
      * ============================
      * PRIHVATANJE NARUDŽBINE

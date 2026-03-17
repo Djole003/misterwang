@@ -269,6 +269,9 @@ Route::middleware([EnsureRestaurantSelected::class])->group(function () {
 
         Route::get('/orders/history', [AdminOrderController::class, 'history'])
             ->name('orders.history');
+
+        Route::get('/orders/{id}/details', [AdminOrderController::class, 'show'])
+            ->name('orders.details');
     });
 
     /*
