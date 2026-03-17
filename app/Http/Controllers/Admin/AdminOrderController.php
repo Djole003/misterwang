@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\AddOn;
 
 class AdminOrderController extends Controller
 {
@@ -141,7 +142,7 @@ class AdminOrderController extends Controller
                 ?? $item->product->name 
                 ?? 'Proizvod';
 
-            // 🔥 SIGURNO PARSIRANJE (radi i ako je array i ako je JSON)
+            
             $details = $item->details ?? [];
 
             if (!is_array($details)) {
@@ -152,8 +153,17 @@ class AdminOrderController extends Controller
             $size   = !empty($details['size']) ? "📏 {$details['size']}" : '';
             $sos    = !empty($details['sos']) ? "🥫 {$details['sos']}" : '';
             $meat   = !empty($details['meat']) ? "🍗 {$details['meat']}" : '';
-            $addons = (!empty($details['addons']) && is_array($details['addons']))
-                ? "➕ " . implode(', ', $details['addons'])
+            $addonNames = [];
+
+            if (!empty($details['addons']) && is_array($details['addons'])) {
+
+                $addonNames = AddOn::whereIn('id', $details['addons'])
+                    ->pluck('name') // ili 'naziv' ako ti je tako u bazi
+                    ->toArray();
+            }
+
+            $addons = !empty($addonNames)
+                ? "➕ " . implode(', ', $addonNames)
                 : '';
 
             $html .= "
