@@ -158,16 +158,14 @@
 <script>
 function showOrder(id) {
 
-    // loading spinner
-    document.getElementById('orderDetails').innerHTML = `
-        <div class="text-center py-4">
-            <div class="spinner-border text-primary"></div>
-            <p class="mt-2">Učitavanje...</p>
-        </div>
-    `;
+    let url = "{{ route('admin.orders.details', ':id') }}";
+    url = url.replace(':id', id);
 
-    fetch('/admin/orders/' + id + '/details')
-        .then(res => res.text())
+    fetch(url)
+        .then(res => {
+            if (!res.ok) throw new Error("404");
+            return res.text();
+        })
         .then(html => {
 
             document.getElementById('orderDetails').innerHTML = html;
@@ -175,12 +173,9 @@ function showOrder(id) {
             let modal = new bootstrap.Modal(document.getElementById('orderModal'));
             modal.show();
         })
-        .catch(err => {
-            document.getElementById('orderDetails').innerHTML = `
-                <div class="text-danger text-center">
-                    Greška pri učitavanju
-                </div>
-            `;
+        .catch(() => {
+            document.getElementById('orderDetails').innerHTML =
+                "<div class='text-danger text-center'>Greška (ruta ne postoji)</div>";
         });
 }
 </script>
