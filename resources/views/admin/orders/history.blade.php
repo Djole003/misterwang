@@ -158,14 +158,10 @@
 <script>
 function showOrder(id) {
 
-    let url = "{{ route('admin.orders.details', ':id') }}";
-    url = url.replace(':id', id);
+    let url = "/admin/orders/" + id + "/details";
 
     fetch(url)
-        .then(res => {
-            if (!res.ok) throw new Error("404");
-            return res.text();
-        })
+        .then(res => res.text())
         .then(html => {
 
             document.getElementById('orderDetails').innerHTML = html;
@@ -173,9 +169,9 @@ function showOrder(id) {
             let modal = new bootstrap.Modal(document.getElementById('orderModal'));
             modal.show();
         })
-        .catch(() => {
-            document.getElementById('orderDetails').innerHTML =
-                "<div class='text-danger text-center'>Greška (ruta ne postoji)</div>";
+        .catch(err => {
+            console.error(err);
+            alert("Greška pri učitavanju");
         });
 }
 </script>
