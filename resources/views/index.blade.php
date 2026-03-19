@@ -48,10 +48,9 @@
             {{-- ===== KRAJ PROMO SEKCIJE ===== --}}
 
             <a href="{{ route('jelovnik') }}"
-               class="btn btn-danger btn-lg open-order-type-modal">
-                Pogledaj jelovnik
+                class="btn btn-primary btn-lg open-order-type-modal">
+                    Pogledaj jelovnik
             </a>
-
         </div>
     </div>
 </section>
@@ -164,122 +163,6 @@
 
 
 
-{{-- =======================
-   HERO SLIDER
-======================= --}}
-<section class="hero-slider-section"
-    style="
-        border-top: 6px solid #ffd600;
-        border-bottom: 6px solid #ffd600;
-        box-shadow: 0 18px 35px rgba(0,0,0,0.30);
-        padding-top: 30px;
-        padding-bottom: 30px;
-    "
->
-    <div class="hero-slider-container"> 
-
-        {{-- Slide 1 --}}
-        <div class="dish-slide show">
-            <div class="dish-content">
-                <p class="dish-category">Predjelo</p>
-                <h3 class="dish-title">Rolnice sa povrćem</h3>
-                <p class="dish-description">
-                    Hrskave rolnice punjene svežim povrćem, savršen početak obroka.
-                </p>
-                <a href="{{ url('/jela/5') }}"
-                   class="btn btn-details open-order-type-modal">
-                    Detalji proizvoda
-                </a>
-            </div>
-            <div class="dish-image">
-                <img src="{{ asset('assets/rolnice_povrce.JPG') }}"
-                     alt="Rolnice sa povrćem – kineski restoran Mister Wang Beograd">
-            </div>
-        </div>
-
-        {{-- Slide 2 --}}
-        <div class="dish-slide">
-            <div class="dish-content">
-                <p class="dish-category">Glavno jelo</p>
-                <h3 class="dish-title">Kraljevska piletina</h3>
-                <p class="dish-description">
-                    Sočna piletina u aromatičnom sosu sa povrćem i začinima.
-                </p>
-                <a href="{{ url('/jela/27') }}"
-                   class="btn btn-details open-order-type-modal">
-                    Detalji proizvoda
-                </a>
-            </div>
-            <div class="dish-image">
-                <img src="{{ asset('assets/kralj.JPG') }}"
-                     alt="Kraljevska piletina – kineska hrana dostava Beograd">
-            </div>
-        </div>
-
-        {{-- Slide 3 --}}
-        <div class="dish-slide">
-            <div class="dish-content">
-                <p class="dish-category">Glavno jelo</p>
-                <h3 class="dish-title">
-                    Kung Pao piletina <span style="color:#FF4D4D;">(Specijalitet kuće)</span>
-                </h3>
-                <p class="dish-description">
-                    Autentična kineska piletina sa kikirikijem, pikantna i sočna.
-                </p>
-                <a href="{{ url('/jela/28') }}"
-                   class="btn btn-details open-order-type-modal">
-                    Detalji proizvoda
-                </a>
-            </div>
-            <div class="dish-image">
-                <img src="{{ asset('assets/kung-pao.jpg') }}"
-                     alt="Kung Pao piletina – kineski restoran Mister Wang Beograd">
-            </div>
-        </div>
-
-        {{-- Slide 4 --}}
-        <div class="dish-slide">
-            <div class="dish-content">
-                <p class="dish-category">Vegetarijansko</p>
-                <h3 class="dish-title">Mešano povrće</h3>
-                <p class="dish-description">
-                    Sveže sezonsko povrće pripremljeno na tradicionalan kineski način.
-                </p>
-                <a href="{{ url('/jela/12') }}"
-                   class="btn btn-details open-order-type-modal">
-                    Detalji proizvoda
-                </a>
-            </div>
-            <div class="dish-image">
-                <img src="{{ asset('assets/mesano_povrce.JPG') }}"
-                     alt="Mešano povrće – vegetarijanska kineska hrana Beograd">
-            </div>
-        </div>
-
-        {{-- Slide 5 --}}
-        <div class="dish-slide">
-            <div class="dish-content">
-                <p class="dish-category">Dezert</p>
-                <h3 class="dish-title">Pohovana banana</h3>
-                <p class="dish-description">
-                    Sladak i hrskav kineski dezert, savršen završetak obroka.
-                </p>
-                <a href="{{ url('/jela/21') }}"
-                   class="btn btn-details open-order-type-modal">
-                    Detalji proizvoda
-                </a>
-            </div>
-            <div class="dish-image">
-                <img src="{{ asset('assets/poh_banana.JPG') }}"
-                     alt="Pohovana banana – kineski dezert Mister Wang">
-            </div>
-        </div>
-
-        {{-- Kontrole --}}
-        <button class="slider-btn prev">&#10094;</button>
-        <button class="slider-btn next">&#10095;</button>
-    </div>
-</section>
 
 {{-- =======================
    ABOUT US
