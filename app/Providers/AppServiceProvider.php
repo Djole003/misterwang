@@ -32,21 +32,28 @@ class AppServiceProvider extends ServiceProvider
                 ? Restaurant::find($restaurantId)
                 : null;
 
-            // 🔹 KONTAKT PODACI ZA FOOTER
+            // 🔹 KONTAKT PODACI
             $restaurantContact = $restaurantId
                 ? RestaurantContact::where('restaurant_id', $restaurantId)->first()
                 : null;
 
-            // 🔹 ZONE ZA MAPU
+            // 🔹 ZONE
             $deliveryZones = $restaurantId
                 ? DeliveryZone::where('restaurant_id', $restaurantId)->get()
                 : collect();
+
+            // 🔥 SAFE ADDONS (NEĆE VIŠE PUCI)
+            try {
+                $addons = AddOn::all();
+            } catch (\Exception $e) {
+                $addons = collect();
+            }
 
             $view->with([
                 'currentRestaurant' => $currentRestaurant,
                 'restaurantContact' => $restaurantContact,
                 'deliveryZones'     => $deliveryZones,
-                'addons'            => AddOn::all()
+                'addons'            => $addons
             ]);
         });
     }
