@@ -118,7 +118,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         button.addEventListener('click', function () {
 
-            const price = parseFloat(this.dataset.price);
+            // ✅ UZIMAMO VEĆ SNIŽENU CENU (npr 680)
+            let price = parseFloat(this.dataset.price);
+
             const isDrink = this.dataset.isDrink == "1";
             const categoryAddons = JSON.parse(this.dataset.addons || '[]');
 
@@ -126,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
             basePriceInput.value = price;
             isDrinkInput.value = isDrink ? 1 : 0;
 
+            // reset dodataka
             addonsContainer.innerHTML = '';
 
             if (categoryAddons.length > 0) {
@@ -168,20 +171,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let base = parseFloat(basePriceInput.value) || 0;
 
+        // ✅ velika porcija
         if (sizeSelect.value === 'velika') {
             base += 200;
         }
 
+        // ✅ dodaci
         document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
             base += parseFloat(cb.dataset.price);
         });
 
         const qty = parseInt(quantityInput.value) || 1;
-
-        // 15% POPUST NA SVE OSIM PIĆA
-        if (isDrinkInput.value != "1") {
-            base = base * 0.85;
-        }
 
         totalPriceEl.innerText = (base * qty).toFixed(0);
     }
