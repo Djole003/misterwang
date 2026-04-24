@@ -20,8 +20,7 @@ $isPice = ($jelo->category->slug == 'pice');
 
 <div class="custom-detail-wrapper container my-5">
     <div class="row">
-
-```
+        
     <!-- Glavno jelo -->
     <div class="col-md-6">
         <div class="main-dish-box">
@@ -101,7 +100,7 @@ $isPice = ($jelo->category->slug == 'pice');
     </div>
 
 </div>
-```
+
 
 </div>
 
