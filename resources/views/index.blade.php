@@ -1,8 +1,193 @@
 @extends('layouts.app')
 @include('partials.header')
 
+@section('title', 'Mister Wang - Kineski restoran u Beogradu | Online porucivanje')
+@section('meta_description', 'Porucite autenticnu kinesku hranu online. Mister Wang Beograd nudi brzu dostavu, sveze sastojke i specijalitete iz jelovnika.')
+
 @section('content')
 
+<style>
+.home-polish {
+    background: #fffaf2;
+    color: #241815;
+}
+
+.home-polish .hero {
+    border-bottom: 5px solid #f1c232 !important;
+    box-shadow: 0 18px 38px rgba(36, 24, 21, 0.24) !important;
+}
+
+.home-polish .hero-image {
+    min-height: 68vh;
+}
+
+.home-polish .hero-overlay {
+    align-items: flex-start !important;
+    padding: 72px max(24px, calc((100vw - 1120px) / 2)) !important;
+    background: linear-gradient(90deg, rgba(19, 13, 11, 0.86), rgba(19, 13, 11, 0.55), rgba(19, 13, 11, 0.2)) !important;
+    text-align: left !important;
+}
+
+.home-polish .hero-overlay h1 {
+    max-width: 830px;
+    margin-bottom: 18px;
+    font-size: 3.4rem;
+    line-height: 1.05;
+    font-weight: 900 !important;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.42);
+}
+
+.home-polish .hero-overlay > p {
+    max-width: 680px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.65;
+}
+
+.home-polish .promo-box {
+    max-width: 720px !important;
+    margin-top: 8px !important;
+    margin-bottom: 22px !important;
+    padding: 16px 18px !important;
+    border: 1px solid rgba(241, 194, 50, 0.8) !important;
+    border-radius: 8px !important;
+    background: rgba(140, 24, 20, 0.88) !important;
+    animation: none !important;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+}
+
+.home-polish .hero .btn,
+.home-polish .cta .btn {
+    min-height: 48px;
+    padding: 12px 26px;
+    border: 0;
+    border-radius: 8px;
+    background: #e53935;
+    color: #fff;
+    font-weight: 800;
+    box-shadow: 0 12px 25px rgba(125, 21, 18, 0.35);
+    transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.home-polish .hero .btn:hover,
+.home-polish .cta .btn:hover {
+    background: #c62828;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.home-special-offer {
+    background: linear-gradient(135deg, #8f1714, #d93632) !important;
+    border-top: 5px solid #f1c232 !important;
+    border-bottom: 5px solid #f1c232 !important;
+}
+
+.home-special-offer > div {
+    width: min(1120px, calc(100% - 32px)) !important;
+}
+
+.home-special-offer h2 {
+    font-size: 2.7rem !important;
+    line-height: 1.15 !important;
+}
+
+.home-special-offer a {
+    border-radius: 8px !important;
+    transition: transform 0.18s ease, background-color 0.18s ease;
+}
+
+.home-special-offer a:hover {
+    background: #ffd24c !important;
+    transform: translateY(-2px);
+}
+
+.home-special-offer img {
+    border-radius: 8px !important;
+}
+
+.home-polish .about-us {
+    background: #fffaf2 !important;
+    padding: 72px 0 !important;
+}
+
+.home-polish .about-us h2,
+.home-polish .cta h2 {
+    color: #241815;
+    font-weight: 900 !important;
+}
+
+.home-polish .about-us > .container > p {
+    max-width: 760px;
+    margin-right: auto;
+    margin-left: auto;
+    color: #655752;
+    line-height: 1.7;
+}
+
+.home-polish .feature-item {
+    min-height: 100%;
+    padding: 18px;
+    border: 1px solid #eadfd1;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(67, 41, 21, 0.08);
+}
+
+.home-polish .feature-item img {
+    width: 108px;
+    height: 108px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.home-polish .feature-item h6 {
+    color: #2a1d18;
+    font-weight: 800;
+}
+
+.home-polish .cta {
+    margin-top: 0;
+    padding: 64px 16px !important;
+    background: #201816 !important;
+    color: #fff;
+}
+
+.home-polish .cta h2 {
+    color: #fff;
+}
+
+.home-polish .cta p {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+@media (max-width: 768px) {
+    .home-polish .hero-image {
+        height: auto !important;
+        min-height: 58vh;
+    }
+
+    .home-polish .hero-overlay {
+        padding: 52px 18px !important;
+    }
+
+    .home-polish .hero-overlay h1 {
+        font-size: 2.05rem;
+    }
+
+    .home-polish .hero-overlay > p {
+        font-size: 1rem !important;
+    }
+
+    .home-special-offer {
+        padding: 52px 18px !important;
+    }
+
+    .home-special-offer h2 {
+        font-size: 2rem !important;
+    }
+}
+</style>
+
+<div class="home-polish">
 
 <section class="hero position-relative"
     style="
@@ -67,7 +252,7 @@
 {{-- =======================
    AKCIJA – PRIVREMENI REDIRECT
 ======================= --}}
-<section
+<section class="home-special-offer"
     style="
         background: linear-gradient(135deg, #b31217, #e52d27);
         padding: 80px 20px;
@@ -245,6 +430,8 @@
 
 
 
+</div>
+
 @include('partials.footer')
 
 @endsection
@@ -273,38 +460,5 @@ document.addEventListener("DOMContentLoaded", function() {
     }, { threshold: 0.2 });
 
     items.forEach(item => observer.observe(item));
-});
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.dish-slide');
-    const totalSlides = slides.length;
-
-    const prevBtn = document.querySelector('.slider-btn.prev');
-    const nextBtn = document.querySelector('.slider-btn.next');
-
-    function showSlide(index){
-        slides.forEach(slide => slide.classList.remove('show'));
-        slides[index].classList.add('show');
-    }
-
-    showSlide(currentSlide);
-
-    let slideInterval = setInterval(() => {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        showSlide(currentSlide);
-    }, 5000);
-
-    nextBtn.addEventListener('click', () => {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        showSlide(currentSlide);
-    });
-
-    prevBtn.addEventListener('click', () => {
-        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-        showSlide(currentSlide);
-    });
 });
 </script>

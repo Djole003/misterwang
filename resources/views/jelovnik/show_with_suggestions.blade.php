@@ -4,140 +4,105 @@
 
 @section('content')
 @php
-    $orderType = session('order_type', 'delivery');
+$orderType = session('order_type', 'delivery');
 
-    $originalPrice = $orderType === 'takeaway'
-        ? $jelo->price_takeaway
-        : $jelo->price_delivery;
+```
+$originalPrice = $orderType === 'takeaway'
+    ? $jelo->price_takeaway
+    : $jelo->price_delivery;
 
-    $discountedPrice = $jelo->price;
+$discountedPrice = $jelo->price;
 
-    $isPice = ($jelo->category->slug == 'pice');
+$isPice = ($jelo->category->slug == 'pice');
+```
+
 @endphp
 
 <div class="custom-detail-wrapper container my-5">
     <div class="row">
 
-        <!-- Glavno jelo -->
-        <div class="col-md-6">
-            <div class="main-dish-box">
+```
+    <!-- Glavno jelo -->
+    <div class="col-md-6">
+        <div class="main-dish-box">
 
-                <img src="{{ asset($jelo->image_path) }}"
-                     alt="{{ $jelo->name }} – kinesko jelo Mister Wang"
-                     class="main-dish-img">
+            <img src="{{ asset($jelo->image_path) }}"
+                 alt="{{ $jelo->name }}"
+                 class="main-dish-img">
 
-                <h1 class="main-dish-title">
-                    {{ $jelo->name }}
-                </h1>
+            <h1 class="main-dish-title">
+                {{ $jelo->name }}
+            </h1>
 
-                <p style="font-size:0.9rem; color:#6d4c41;">
-                    {{ $jelo->name }} iz ponude kineskog restorana Mister Wang.
-                    Autentični kineski ukusi, brza priprema i dostava u Beogradu.
-                </p>
+            <p class="main-dish-desc">
+                {{ $jelo->description }}
+            </p>
 
-                <p class="main-dish-desc">
-                    {{ $jelo->description }}
-                </p>
+            <div class="mb-3">
+                @if(!$isPice)
+                    <span style="text-decoration: line-through;">
+                        {{ number_format($originalPrice, 0) }} RSD
+                    </span><br>
 
-                {{-- CENE SA POPUSTOM --}}
-
-                <div class="mb-3">
-                    @if(!$isPice)
-                        <span style="text-decoration: line-through; color:#888; font-size:1rem;">
-                            {{ number_format($originalPrice, 0) }} RSD
-                        </span>
-
-                        <br>
-
-                        <span style="color:#d32f2f; font-size:1.4rem; font-weight:bold;">
-                            {{ number_format($discountedPrice, 0) }} RSD
-                        </span>
-                    @else
-                        <span style="color:#bf360c; font-size:1.3rem;">
-                            {{ number_format($originalPrice, 0) }} RSD
-                        </span>
-                    @endif
-                </div>
-
-                <p class="main-dish-orders">
-                    Poručeno puta: {{ $jelo->total_orders }}
-                </p>
-
-                {{-- DUGME ZA PORUČIVANJE --}}
-
-                <button type="button"
-                        class="btn btn-success btn-lg order-btn"
-                        data-bs-toggle="modal"
-                        data-bs-target="#addToCartModal"
-                        data-id="{{ $jelo->id }}"
-                        data-name="{{ $jelo->name }}"
-                        data-price="{{ $jelo->price }}"
-                        style="min-width:200px;">
-
-                    🛒 Poruči odmah
-                </button>
-
+                    <span style="color:red; font-weight:bold;">
+                        {{ number_format($discountedPrice, 0) }} RSD
+                    </span>
+                @else
+                    <span>
+                        {{ number_format($originalPrice, 0) }} RSD
+                    </span>
+                @endif
             </div>
+
+            <button type="button"
+                    class="btn btn-success btn-lg order-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addToCartModal"
+                    data-id="{{ $jelo->id }}"
+                    data-name="{{ $jelo->name }}"
+                    data-price="{{ $jelo->price }}"
+                    data-has-size="{{ $jelo->has_size }}"
+                    data-has-sos="{{ $jelo->has_sos }}"
+                    data-has-meat="{{ $jelo->has_meat }}"
+                    data-has-rice="{{ $jelo->has_rice_option }}"
+                    data-addons='@json($jelo->category->addOns ?? [])'>
+
+                🛒 Poruči odmah
+            </button>
+
         </div>
-
-        <!-- Preporuke -->
-        <div class="col-md-6">
-            <div class="side-suggestions-box">
-
-                <h4 class="side-section-title">
-                    Preporučena pića
-                </h4>
-
-                <div class="row">
-                    @foreach($pice as $p)
-                        <div class="col-md-4 col-6 mb-3">
-                            <a href="{{ route('dish.showWithSuggestions', ['id' => $p->id]) }}"
-                               class="text-decoration-none text-dark open-order-type-modal">
-
-                                <div class="suggestion-card">
-                                    <img src="{{ asset($p->image_path) }}"
-                                         alt="{{ $p->name }}"
-                                         class="suggestion-img">
-
-                                    <p class="suggestion-name">
-                                        {{ $p->name }}
-                                    </p>
-                                </div>
-
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-
-                <h4 class="side-section-title mt-4">
-                    Preporučeni dezerti
-                </h4>
-
-                <div class="row">
-                    @foreach($dezerti as $d)
-                        <div class="col-md-4 col-6 mb-3">
-                            <a href="{{ route('dish.showWithSuggestions', ['id' => $d->id]) }}"
-                               class="text-decoration-none text-dark open-order-type-modal">
-
-                                <div class="suggestion-card">
-                                    <img src="{{ asset($d->image_path) }}"
-                                         alt="{{ $d->name }}"
-                                         class="suggestion-img">
-
-                                    <p class="suggestion-name">
-                                        {{ $d->name }}
-                                    </p>
-                                </div>
-
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-
-            </div>
-        </div>
-
     </div>
+
+    <!-- Preporuke -->
+    <div class="col-md-6">
+        <h4>Preporučena pića</h4>
+
+        <div class="row">
+            @foreach($pice as $p)
+                <div class="col-6 mb-2">
+                    <a href="{{ route('dish.showWithSuggestions', $p->id) }}">
+                        {{ $p->name }}
+                    </a>
+                </div>
+            @endforeach
+        </div>
+
+        <h4 class="mt-3">Preporučeni dezerti</h4>
+
+        <div class="row">
+            @foreach($dezerti as $d)
+                <div class="col-6 mb-2">
+                    <a href="{{ route('dish.showWithSuggestions', $d->id) }}">
+                        {{ $d->name }}
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+</div>
+```
+
 </div>
 
 @include('partials.addToCartModal')
@@ -145,72 +110,90 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Klik na dugme "Poruči odmah"
+    const productIdInput = document.getElementById('modalProductId');
+    const basePriceInput = document.getElementById('productBasePrice');
+
+    const totalPriceEl = document.getElementById('totalPrice');
+    const quantityInput = document.getElementById('productQuantity');
+
+    const sizeSelect = document.getElementById('productSize');
+
+    const sizeSection = document.getElementById('sizeSection');
+    const sosSection = document.getElementById('sosSection');
+    const meatSection = document.getElementById('meatSection');
+    const riceSection = document.getElementById('riceSection');
+    const addonsSection = document.getElementById('addonsSection');
+    const addonsContainer = document.getElementById('addonsContainer');
+
     document.querySelectorAll('.order-btn').forEach(button => {
+
         button.addEventListener('click', function () {
 
-            const productId = this.dataset.id;
-            const productName = this.dataset.name;
-            const productPrice = parseFloat(this.dataset.price);
+            productIdInput.value = this.dataset.id;
+            basePriceInput.value = parseFloat(this.dataset.price);
 
-            document.getElementById('modalProductId').value = productId;
-            document.getElementById('productBasePrice').value = productPrice;
+            const config = {
+                hasSize: this.dataset.hasSize === "1",
+                hasSos: this.dataset.hasSos === "1",
+                hasMeat: this.dataset.hasMeat === "1",
+                hasRice: this.dataset.hasRice === "1"
+            };
 
-            document.querySelector('#addToCartModal .modal-title').textContent =
-                "Dodaj u korpu: " + productName;
+            sizeSection.style.display = config.hasSize ? 'block' : 'none';
+            sosSection.style.display = config.hasSos ? 'block' : 'none';
+            meatSection.style.display = config.hasMeat ? 'block' : 'none';
+            riceSection.style.display = config.hasRice ? 'block' : 'none';
 
-            document.getElementById('totalPrice').innerText =
-                productPrice.toFixed(0);
+            // addons
+            addonsContainer.innerHTML = '';
+
+            const addons = JSON.parse(this.dataset.addons || '[]');
+
+            if (addons.length > 0) {
+                addonsSection.style.display = 'block';
+
+                addons.forEach(addon => {
+                    addonsContainer.innerHTML += `
+                        <div>
+                            <input type="checkbox"
+                                   class="addon-checkbox"
+                                   data-price="${addon.price}">
+                            ${addon.name} (+${addon.price})
+                        </div>
+                    `;
+                });
+
+            } else {
+                addonsSection.style.display = 'none';
+            }
+
+            recalcPrice();
         });
     });
 
-    // GLAVNA LOGIKA – SUBMIT FORME I POVRATAK NA KATEGORIJU
-    const form = document.getElementById('addToCartForm');
+    function recalcPrice() {
+        let base = parseFloat(basePriceInput.value) || 0;
 
-    if (form) {
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+        if (sizeSelect && sizeSelect.value === 'velika') {
+            base += 200;
+        }
 
-            fetch(form.action, {
-                method: 'POST',
-                body: new FormData(form),
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-
-                if (data.success) {
-
-                    // Zatvori modal
-                    const modalEl = document.getElementById('addToCartModal');
-                    const existingModal = bootstrap.Modal.getInstance(modalEl);
-
-                    if (existingModal) {
-                        existingModal.hide();
-                    }
-
-                    // Ažuriraj broj u korpi
-                    const cartCount = document.getElementById('cart-count');
-                    if (cartCount) {
-                        cartCount.textContent = data.cart_count;
-                        cartCount.style.display = 'inline-block';
-                    }
-
-                    // RESET FORME
-                    form.reset();
-
-                    // 🔥 POVRATAK NA KATEGORIJU
-                    window.location.href = "{{ route('jelovnik.kategorija', ['slug' => $jelo->category->slug]) }}";
-                }
-
-            })
-            .catch(err => {
-                console.error('Greška pri dodavanju u korpu:', err);
-            });
+        document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
+            base += parseFloat(cb.dataset.price);
         });
+
+        const qty = parseInt(quantityInput.value) || 1;
+
+        totalPriceEl.innerText = (base * qty).toFixed(0);
     }
+
+    document.addEventListener('change', function(e){
+        if(e.target.classList.contains('addon-checkbox') || e.target.id === 'productSize') {
+            recalcPrice();
+        }
+    });
+
+    quantityInput.addEventListener('input', recalcPrice);
 
 });
 </script>
