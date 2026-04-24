@@ -6,7 +6,7 @@
 @php
 $orderType = session('order_type', 'delivery');
 
-```
+
 $originalPrice = $orderType === 'takeaway'
     ? $jelo->price_takeaway
     : $jelo->price_delivery;
@@ -14,13 +14,14 @@ $originalPrice = $orderType === 'takeaway'
 $discountedPrice = $jelo->price;
 
 $isPice = ($jelo->category->slug == 'pice');
-```
+
 
 @endphp
 
 <div class="custom-detail-wrapper container my-5">
     <div class="row">
-        
+
+
     <!-- Glavno jelo -->
     <div class="col-md-6">
         <div class="main-dish-box">
