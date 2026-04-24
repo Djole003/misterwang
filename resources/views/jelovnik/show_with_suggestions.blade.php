@@ -144,7 +144,6 @@ document.addEventListener('DOMContentLoaded', function () {
             meatSection.style.display = config.hasMeat ? 'block' : 'none';
             riceSection.style.display = config.hasRice ? 'block' : 'none';
 
-            // addons
             addonsContainer.innerHTML = '';
 
             const addons = JSON.parse(this.dataset.addons || '[]');
@@ -154,9 +153,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 addons.forEach(addon => {
                     addonsContainer.innerHTML += `
-                        <div>
+                        <div class="form-check">
                             <input type="checkbox"
-                                   class="addon-checkbox"
+                                   class="form-check-input addon-checkbox"
                                    data-price="${addon.price}">
                             ${addon.name} (+${addon.price})
                         </div>
