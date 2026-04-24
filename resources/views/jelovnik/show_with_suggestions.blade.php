@@ -21,22 +21,16 @@ $isPice = ($jelo->category->slug == 'pice');
 <div class="custom-detail-wrapper container my-5">
     <div class="row">
 
-
-    <!-- Glavno jelo -->
+    <!-- LEVO: GLAVNO JELO -->
     <div class="col-md-6">
         <div class="main-dish-box">
 
             <img src="{{ asset($jelo->image_path) }}"
-                 alt="{{ $jelo->name }}"
-                 class="main-dish-img">
+                 class="img-fluid mb-3 rounded">
 
-            <h1 class="main-dish-title">
-                {{ $jelo->name }}
-            </h1>
+            <h1>{{ $jelo->name }}</h1>
 
-            <p class="main-dish-desc">
-                {{ $jelo->description }}
-            </p>
+            <p>{{ $jelo->description }}</p>
 
             <div class="mb-3">
                 @if(!$isPice)
@@ -48,9 +42,7 @@ $isPice = ($jelo->category->slug == 'pice');
                         {{ number_format($discountedPrice, 0) }} RSD
                     </span>
                 @else
-                    <span>
-                        {{ number_format($originalPrice, 0) }} RSD
-                    </span>
+                    <span>{{ number_format($originalPrice, 0) }} RSD</span>
                 @endif
             </div>
 
@@ -73,31 +65,96 @@ $isPice = ($jelo->category->slug == 'pice');
         </div>
     </div>
 
-    <!-- Preporuke -->
+    <!-- DESNO: PREPORUKE -->
     <div class="col-md-6">
+
         <h4>Preporučena pića</h4>
 
         <div class="row">
             @foreach($pice as $p)
-                <div class="col-6 mb-2">
-                    <a href="{{ route('dish.showWithSuggestions', $p->id) }}">
-                        {{ $p->name }}
-                    </a>
+                <div class="col-6 col-md-4 mb-3">
+                    <div class="card shadow-sm h-100">
+
+                        <a href="{{ route('dish.showWithSuggestions', $p->id) }}"
+                           class="text-decoration-none text-dark">
+
+                            <img src="{{ asset($p->image_path) }}"
+                                 class="card-img-top"
+                                 style="height:100px; object-fit:cover;">
+                        </a>
+
+                        <div class="card-body p-2 text-center">
+
+                            <small>{{ $p->name }}</small><br>
+
+                            <strong>
+                                {{ number_format($p->price, 0) }} RSD
+                            </strong>
+
+                            <form action="{{ route('cart.add') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $p->id }}">
+                                <input type="hidden" name="quantity" value="1">
+
+                                <button type="submit"
+                                        class="btn btn-success btn-sm w-100 mt-2">
+                                    Dodaj
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </div>
                 </div>
             @endforeach
         </div>
 
-        <h4 class="mt-3">Preporučeni dezerti</h4>
+        <h4 class="mt-4">Preporučeni dezerti</h4>
 
         <div class="row">
             @foreach($dezerti as $d)
-                <div class="col-6 mb-2">
-                    <a href="{{ route('dish.showWithSuggestions', $d->id) }}">
-                        {{ $d->name }}
-                    </a>
+                <div class="col-6 col-md-4 mb-3">
+                    <div class="card shadow-sm h-100">
+
+                        <a href="{{ route('dish.showWithSuggestions', $d->id) }}"
+                           class="text-decoration-none text-dark">
+
+                            <img src="{{ asset($d->image_path) }}"
+                                 class="card-img-top"
+                                 style="height:100px; object-fit:cover;">
+                        </a>
+
+                        <div class="card-body p-2 text-center">
+
+                            <small>{{ $d->name }}</small><br>
+
+                            <strong>
+                                {{ number_format($d->price, 0) }} RSD
+                            </strong>
+
+                            <button type="button"
+                                    class="btn btn-success btn-sm w-100 mt-2 order-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addToCartModal"
+                                    data-id="{{ $d->id }}"
+                                    data-name="{{ $d->name }}"
+                                    data-price="{{ $d->price }}"
+                                    data-has-size="{{ $d->has_size }}"
+                                    data-has-sos="{{ $d->has_sos }}"
+                                    data-has-meat="{{ $d->has_meat }}"
+                                    data-has-rice="{{ $d->has_rice_option }}"
+                                    data-addons='@json($d->category->addOns ?? [])'>
+
+                                Dodaj
+                            </button>
+
+                        </div>
+
+                    </div>
                 </div>
             @endforeach
         </div>
+
     </div>
 
 </div>
