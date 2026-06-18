@@ -209,12 +209,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 addonsSection.style.display = 'block';
 
                 addons.forEach(addon => {
+
+                    const id = "addon_" + addon.id;
+
                     addonsContainer.innerHTML += `
                         <div class="form-check">
                             <input type="checkbox"
-                                   class="form-check-input addon-checkbox"
-                                   data-price="${addon.price}">
-                            ${addon.name} (+${addon.price})
+                                class="form-check-input addon-checkbox"
+                                id="${id}"
+                                name="addons[]"
+                                value="${addon.id}"
+                                data-price="${addon.price}">
+                            <label for="${id}">
+                                ${addon.name} (+${addon.price})
+                            </label>
                         </div>
                     `;
                 });
