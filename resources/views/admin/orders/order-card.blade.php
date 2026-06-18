@@ -54,6 +54,15 @@
             </div>
         @endif
 
+        @if($order->order_type === 'takeaway')
+            <div class="mb-2 bg-light p-2 rounded">
+                <div>
+                    <strong>👤 Kupac:</strong>
+                    {{ $info['ime'] ?? '—' }}
+                </div>
+            </div>
+        @endif
+
         @if($order->status === 'rejected')
             <div class="alert alert-danger py-2 mb-3">
                 ❌ <strong>Porudžbina je odbijena</strong><br>
