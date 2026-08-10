@@ -52,6 +52,10 @@
     <div class="row g-4 justify-content-center">
         @foreach($restaurants as $restaurant)
 
+            @if($restaurant->id == 3)
+                @continue
+            @endif
+
             <div class="col-6 col-md-3">
                 <form method="POST" action="{{ route('select.restaurant.store') }}">
                     @csrf

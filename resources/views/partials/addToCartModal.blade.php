@@ -68,11 +68,11 @@
           <div class="mb-3">
             <label class="form-label fw-bold">Pribor</label>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="utensils" value="stapici" >
+              <input class="form-check-input" type="radio" name="cutlery" value="stapici" >
               <label class="form-check-label">🥢 Štapići</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="utensils" value="plasticni" >
+              <input class="form-check-input" type="radio" name="cutlery" value="plasticni" >
               <label class="form-check-label">🍴 Plastični pribor</label>
             </div>
           </div>
